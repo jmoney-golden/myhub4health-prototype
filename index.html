@@ -1,683 +1,443 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>myHub4Health - Role-Based Prototype</title>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#DC143C">
+<title>myHub4Health — My Health My Way</title>
+<link rel="icon" href="assets/logo.png">
 <style>
-  :root {
-    --primary: #B01030;
-    --teal: #1e5a5a;
-    --bg: #f5f5f7;
-    --card: #fff;
-    --text: #1a1a1a;
-    --muted: #666;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f0f0f0;
-    min-height: 100vh;
-    color: var(--text);
-  }
-  .app {
-    max-width: 480px;
-    margin: 0 auto;
-    background: #fff;
-    min-height: 100vh;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-  @media (min-width: 768px) {
-    body { background: #e8e8e8; padding: 20px; }
-    .app {
-      max-width: 900px;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.12);
-      min-height: calc(100vh - 40px);
-      overflow: hidden;
-    }
-  }
-  .status {
-    height: 44px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 16px;
-    font-weight: 600;
-    font-size: 14px;
-    border-bottom: 1px solid #eee;
-  }
-  .screen {
-    display: none;
-    flex: 1;
-    overflow-y: auto;
-    background: var(--bg);
-    padding-bottom: 20px;
-  }
-  .screen.active { display: block; }
-  .nav {
-    height: 68px;
-    background: #fff;
-    border-top: 1px solid #eee;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: sticky;
-    bottom: 0;
-    z-index: 100;
-  }
-  .nav-item {
-    text-align: center;
-    font-size: 11px;
-    color: #999;
-    cursor: pointer;
-    padding: 6px;
-    min-width: 60px;
-  }
-  .nav-item.active { color: var(--primary); }
-  .nav-item:focus { outline: 2px solid var(--primary); }
-  .btn {
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 16px;
-    width: 100%;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 16px;
-  }
-  .btn.teal { background: var(--teal); }
-  .btn.outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
-  .btn:focus { outline: 2px solid #000; }
-  .input, select, textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    font-size: 16px;
-  }
-  .card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 14px;
-    margin: 10px 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.08);
-  }
-  .header {
-    padding: 14px 16px;
-    background: #fff;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .tabs {
-    display: flex;
-    overflow-x: auto;
-    gap: 16px;
-    padding: 10px 16px;
-    background: #fff;
-    border-bottom: 1px solid #eee;
-  }
-  .tab {
-    white-space: nowrap;
-    color: #999;
-    font-weight: 600;
-    cursor: pointer;
-    padding-bottom: 6px;
-  }
-  .tab.active { color: #000; border-bottom: 2px solid #000; }
-  .role-badge {
-    background: var(--primary);
-    color: #fff;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 20px;
-  }
-  .metric { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .share-btn {
-    background: #eee;
-    border: none;
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  @media (min-width: 768px) {
-    .card { margin: 12px 24px; }
-    .header { padding: 16px 24px; }
-    .tabs { padding: 12px 24px; }
-  }
-</style>
-</head>
-<body>
-<div class="app">
-  <div class="status"><span>9:41</span><span>myHub4Health</span></div>
-
-  <!-- ROLE SELECT / LOGIN -->
-  <div class="screen active" id="login">
-    <div style="position:relative; height:280px; background:url('assets/splash.png') center/cover no-repeat; display:flex; align-items:flex-end; justify-content:center; padding-bottom:20px;">
-      <div style="background:rgba(176,16,48,0.85); color:white; padding:16px 24px; border-radius:12px; text-align:center; width:90%;">
-        <div style="font-size:26px; font-weight:800;">myHub4Health</div>
-        <div style="font-size:13px; opacity:0.9;">My Health My Way</div>
-      </div>
-    </div>
-    <div style="padding:24px 20px;">
-      <h3 style="margin-bottom:8px; text-align:center;">Welcome</h3>
-      <p style="text-align:center; color:#666; font-size:14px; margin-bottom:20px;">Your personal health wallet, community, and education platform</p>
-      <h4 style="margin-bottom:12px;">Select Your Role</h4>
-      <button class="btn" onclick="setRole('primary')">Primary User</button>
-      <button class="btn outline" onclick="setRole('caregiver')">Caregiver</button>
-      <button class="btn outline" onclick="setRole('family')">Family Member</button>
-      <button class="btn outline" onclick="setRole('physician')">Health Plan Physician</button>
-      <button class="btn outline" onclick="setRole('insurance')">Health Insurance User</button>
-      <div style="margin-top:24px; font-size:12px; color:#888; text-align:center;">Secure · Private · Accessible on all devices</div>
-    </div>
-  </div>
-
-  <!-- HOME / DASHBOARD -->
-  <div class="screen" id="home">
-    <div class="header">
-      <div style="width:36px;height:36px;border-radius:50%;background:#ddd;"></div>
-      <div>
-        <div style="font-weight:700;">Hello, <span id="userName">User</span></div>
-        <div class="role-badge" id="roleLabel">Primary</div>
-      </div>
-    </div>
-    <div class="card">
-      <strong>Daily Goals</strong>
-      <div class="metric">Steps: 4,500 · Calories: 900 · Heart: 72 bpm</div>
-      <button class="btn teal" style="margin-top:8px;" onclick="go('tracker')">View Tracker</button>
-    </div>
-    <div class="card">
-      <strong>Reminders</strong>
-      <div>Please take Medication</div>
-      <div>How are you feeling today?</div>
-    </div>
-    <div class="card">
-      <strong>Quick Actions</strong>
-      <button class="btn" onclick="go('phr')">Open PHR</button>
-      <button class="btn outline" onclick="go('community')">Community</button>
-      <button class="btn outline" onclick="go('education')">Education (AI)</button>
-      <button class="btn outline" onclick="go('telehealth')">TeleHealth</button>
-    </div>
-  </div>
-
-  <!-- DETAILED PHR -->
-  <div class="screen" id="phr">
-    <div class="header">
-      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
-      <h2>Personal Health Record</h2>
-      <span class="role-badge" id="phrRole"></span>
-    </div>
-    <div class="tabs" id="phrTabs">
-      <div class="tab active" onclick="showPhrTab('demo')">Demographics</div>
-      <div class="tab" onclick="showPhrTab('emergency')">Emergency</div>
-      <div class="tab" onclick="showPhrTab('insurance')">Insurance</div>
-      <div class="tab" onclick="showPhrTab('meds')">Medications</div>
-      <div class="tab" onclick="showPhrTab('allergies')">Allergies</div>
-      <div class="tab" onclick="showPhrTab('surgeries')">Surgeries</div>
-      <div class="tab" onclick="showPhrTab('notes')">Doctor Notes</div>
-    </div>
-    <div id="phrContent" style="padding:12px;"></div>
-    <div style="padding:12px;">
-      <button class="btn" onclick="savePhr()">Save PHR</button>
-      <button class="btn outline" onclick="shareItem('PHR')">Share PHR</button>
-    </div>
-  </div>
-
-  <!-- COMMUNITY / CHAT -->
-  <div class="screen" id="community">
-    <div class="header">
-      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
-      <h2>myHealth Community</h2>
-    </div>
-    <div class="card">
-      <strong>Stories</strong>
-      <div style="margin-top:8px; font-size:14px;">Share your journey or read others in similar situations.</div>
-      <button class="btn" onclick="addStory()">Share Story</button>
-    </div>
-    <div class="card">
-      <strong>Chat Rooms</strong>
-      <div id="chatStatus" style="font-size:13px; margin:6px 0; color:#B01030;"></div>
-      <div id="chatRooms"></div>
-      <input class="input" id="chatMsg" placeholder="Type a message...">
-      <button class="btn" onclick="sendChat()">Send</button>
-    </div>
-    <div class="card">
-      <strong>Relevant Articles</strong>
-      <div id="communityArticles"></div>
-    </div>
-  </div>
-
-  <!-- EDUCATION (AI CURATED) -->
-  <div class="screen" id="education">
-    <div class="header">
-      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
-      <h2>myHealth University</h2>
-    </div>
-    <div class="card">
-      <label>Your Diagnosis / Condition</label>
-      <input class="input" id="diagnosis" placeholder="e.g. Type 2 Diabetes, Hypertension, Cancer..." onchange="curateContent()">
-      <button class="btn" onclick="curateContent()">Curate with AI</button>
-    </div>
-    <div id="eduContent"></div>
-  </div>
-
-  <!-- TELEHEALTH -->
-  <div class="screen" id="telehealth">
-    <div class="header">
-      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
-      <h2>TeleHealth</h2>
-    </div>
-    <div class="card">
-      <input class="input" placeholder="Search Specialty / Physician">
-      <button class="btn" onclick="bookAppt()">Book Appointment</button>
-    </div>
-    <div class="card">
-      <label><input type="checkbox" id="needTranslator"> Need Translator?</label>
-      <div id="apptStatus"></div>
-    </div>
-  </div>
-
-  <!-- METRICS / ADMIN BACKEND VIEW -->
-  <div class="screen" id="metrics">
-    <div class="header">
-      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
-      <h2>Metrics Dashboard</h2>
-    </div>
-    <div class="card" id="metricsContent">
-      Loading metrics...
-    </div>
-    <button class="btn" onclick="refreshMetrics()">Refresh</button>
-  </div>
-
-  <!-- BOTTOM NAV -->
-  <div class="nav">
-    <div class="nav-item active" onclick="go('home')" tabindex="0" role="button">Home</div>
-    <div class="nav-item" onclick="go('phr')" tabindex="0" role="button">PHR</div>
-    <div class="nav-item" onclick="go('community')" tabindex="0" role="button">Community</div>
-    <div class="nav-item" onclick="go('education')" tabindex="0" role="button">Learn</div>
-    <div class="nav-item" onclick="go('metrics')" tabindex="0" role="button">Metrics</div>
-  </div>
-</div>
-
-<script>
-let currentRole = 'primary';
-let phrData = JSON.parse(localStorage.getItem('phrData') || '{}');
-let metrics = JSON.parse(localStorage.getItem('metrics') || '{"logins":0,"phrSaves":0,"shares":0,"chats":0,"eduViews":0,"appointments":0,"warnings":0}');
-
-function setRole(role) {
-  currentRole = role;
-  document.getElementById('roleLabel').textContent = role.charAt(0).toUpperCase() + role.slice(1);
-  document.getElementById('phrRole').textContent = role;
-  document.getElementById('userName').textContent = role === 'physician' ? 'Dr. Smith' : 'Ryan';
-  metrics.logins++;
-  saveMetrics();
-  go('home');
-  track('login', role);
-}
-
-function go(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const target = document.getElementById(id);
-  if (target) target.classList.add('active');
-  if (id === 'phr') renderPhr();
-  if (id === 'community') renderCommunity();
-  if (id === 'education') curateContent();
-  if (id === 'metrics') refreshMetrics();
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-}
-
-function showPhrTab(tab) {
-  document.querySelectorAll('#phrTabs .tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  renderPhrSection(tab);
-}
-
-function renderPhr() {
-  renderPhrSection('demo');
-}
-
-function renderPhrSection(tab) {
-  const content = document.getElementById('phrContent');
-  const d = phrData;
-  let html = '';
-  if (tab === 'demo') {
-    html = `
-      <label>Full Name</label><input class="input" id="name" value="${d.name||''}">
-      <label>Address</label><input class="input" id="address" value="${d.address||''}">
-      <label>City</label><input class="input" id="city" value="${d.city||''}">
-      <label>State</label><input class="input" id="state" value="${d.state||''}">
-      <label>Zip</label><input class="input" id="zip" value="${d.zip||''}">
-      <label>SSN</label><input class="input" id="ssn" value="${d.ssn||''}">
-      <label>Race</label><input class="input" id="race" value="${d.race||''}">
-      <label>Ethnicity</label><input class="input" id="ethnicity" value="${d.ethnicity||''}">
-      <label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select>
-      <label>Diagnosis (for AI curation)</label><input class="input" id="diag" value="${d.diagnosis||''}" placeholder="Used to curate education content">
-    `;
-  } else if (tab === 'emergency') {
-    html = `
-      <label>Police</label><input class="input" id="police" value="${d.police||''}">
-      <label>Fire</label><input class="input" id="fire" value="${d.fire||''}">
-      <label>Ambulance</label><input class="input" id="ambulance" value="${d.ambulance||''}">
-      <label>Primary Care Name</label><input class="input" id="pcpName" value="${d.pcpName||''}">
-      <label>PCP Phone</label><input class="input" id="pcpPhone" value="${d.pcpPhone||''}">
-    `;
-  } else if (tab === 'insurance') {
-    html = `
-      <label>Insurance Company</label><input class="input" id="insCo" value="${d.insCo||''}">
-      <label>Group Number</label><input class="input" id="group" value="${d.group||''}">
-      <label>Customer Service #</label><input class="input" id="cs" value="${d.cs||''}">
-      <label>Member ID</label><input class="input" id="memberId" value="${d.memberId||''}">
-      <div style="margin-top:12px;">
-        <button class="btn outline" onclick="document.getElementById('insFront').click()">📷 Take Photo of Card Front</button>
-        <input type="file" id="insFront" accept="image/*" capture="environment" style="display:none" onchange="processInsurancePhoto(this, 'front')">
-        <button class="btn outline" style="margin-top:8px;" onclick="document.getElementById('insBack').click()">📷 Take Photo of Card Back</button>
-        <input type="file" id="insBack" accept="image/*" capture="environment" style="display:none" onchange="processInsurancePhoto(this, 'back')">
-      </div>
-      <div id="insPhotoStatus" style="margin-top:8px; font-size:13px; color:#666;"></div>
-    `;
-  } else if (tab === 'meds') {
-    html = `
-      <div style="margin-bottom:12px;">
-        <label>Search by drug name</label>
-        <input class="input" id="medSearch" placeholder="e.g. Lisinopril, Metformin, Atorvastatin" onkeyup="if(event.key==='Enter') searchMed()">
-        <button class="btn" onclick="searchMed()">Search NIH</button>
-        <button class="btn outline" onclick="document.getElementById('pillPhoto').click()">📷 Open Camera & Take Pill Bottle Photo</button>
-        <input type="file" id="pillPhoto" accept="image/*" capture="environment" style="display:none" onchange="processPillPhoto(this)">
-      </div>
-      <div id="medResults"></div>
-      <h4 style="margin:16px 0 8px;">My Medications</h4>
-      <div id="medList">${(d.medications||[]).map(m=>`
-        <div class="card" style="display:flex; gap:12px; align-items:center;">
-          <img src="${m.image||'https://via.placeholder.com/80?text=Pill'}" style="width:70px;height:70px;object-fit:contain;border-radius:8px;background:#f9f9f9;" alt="Pill">
-          <div style="flex:1;">
-            <strong>${m.name}</strong><br>
-            <small>${m.strength||''} · ${m.form||''}</small><br>
-            <small style="color:#666;">${m.imprint||''}</small>
-          </div>
-          <button class="share-btn" onclick="removeMed('${m.name}')">✕</button>
-        </div>
-      `).join('')||'<div class="card">No medications added yet</div>'}</div>
-    `;
-  } else if (tab === 'allergies') {
-    html = `<div id="allergyList">${(d.allergies||[]).map(a=>`<div class="card">${a}</div>`).join('')||'None'}</div>
-            <input class="input" id="newAllergy" placeholder="Add allergy">
-            <button class="btn" onclick="addAllergy()">Add</button>`;
-  } else if (tab === 'surgeries') {
-    html = `<div id="surgeryList">${(d.surgeries||[]).map(s=>`<div class="card">${s}</div>`).join('')||'None'}</div>
-            <input class="input" id="newSurgery" placeholder="Add surgery">
-            <button class="btn" onclick="addSurgery()">Add</button>`;
-  } else if (tab === 'notes') {
-    html = `<textarea id="notes" rows="6" placeholder="Doctor notes...">${d.notes||''}</textarea>`;
-  }
-  content.innerHTML = html;
-}
-
-function savePhr() {
-  const fields = ['name','address','city','state','zip','ssn','race','ethnicity','diag','police','fire','ambulance','pcpName','pcpPhone','insCo','group','cs','memberId','notes'];
-  fields.forEach(f => {
-    const el = document.getElementById(f);
-    if (el) phrData[f] = el.value;
-  });
-  phrData.diagnosis = document.getElementById('diag')?.value || phrData.diagnosis;
-  localStorage.setItem('phrData', JSON.stringify(phrData));
-  metrics.phrSaves++;
-  saveMetrics();
-  alert('PHR saved. Diagnosis will be used for AI curation.');
-  track('phr_save', currentRole);
-}
-
-function addAllergy() {
-  const v = document.getElementById('newAllergy').value;
-  if (!v) return;
-  phrData.allergies = phrData.allergies || [];
-  phrData.allergies.push(v);
-  localStorage.setItem('phrData', JSON.stringify(phrData));
-  renderPhrSection('allergies');
-}
-
-function addSurgery() {
-  const v = document.getElementById('newSurgery').value;
-  if (!v) return;
-  phrData.surgeries = phrData.surgeries || [];
-  phrData.surgeries.push(v);
-  localStorage.setItem('phrData', JSON.stringify(phrData));
-  renderPhrSection('surgeries');
-}
-
-// NIH-style sample drug database (pill images are representative; real app would call RxImage / DailyMed APIs)
-const nihDrugs = {
-  "lisinopril": { name: "Lisinopril", strength: "10 mg", form: "Tablet", imprint: "L 10", image: "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=200&h=200&fit=crop" },
-  "metformin": { name: "Metformin", strength: "500 mg", form: "Tablet", imprint: "500", image: "https://images.unsplash.com/photo-1550572017-edd951b55104?w=200&h=200&fit=crop" },
-  "atorvastatin": { name: "Atorvastatin", strength: "20 mg", form: "Tablet", imprint: "ATV 20", image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop" },
-  "amlodipine": { name: "Amlodipine", strength: "5 mg", form: "Tablet", imprint: "A 5", image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop" },
-  "omeprazole": { name: "Omeprazole", strength: "20 mg", form: "Capsule", imprint: "OME 20", image: "https://images.unsplash.com/photo-1550572017-edd951b55104?w=200&h=200&fit=crop" },
-  "levothyroxine": { name: "Levothyroxine", strength: "50 mcg", form: "Tablet", imprint: "L 50", image: "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=200&h=200&fit=crop" },
-  "sertraline": { name: "Sertraline", strength: "50 mg", form: "Tablet", imprint: "S 50", image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop" },
-  "gabapentin": { name: "Gabapentin", strength: "300 mg", form: "Capsule", imprint: "G 300", image: "https://images.unsplash.com/photo-1550572017-edd951b55104?w=200&h=200&fit=crop" }
+/* Brand: crimson (#DC143C) & white */
+:root{--m:#DC143C;--md:#B30F30;--ml:#FDE6EA;--bg:#F6F6F7;--card:#fff;--tx:#1E1E22;--mu:#8A8A93;--ln:#E7E7EC;--g:#22A45D;--blue:#5AA9F6;--r:12px;--sh:0 2px 10px rgba(20,20,40,.07)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#2a2a30 radial-gradient(circle at 30% 20%,#5a0d1e,#1d1d22 60%);color:var(--tx);display:flex;align-items:center;justify-content:center;min-height:100vh}
+#phone{width:390px;height:844px;background:var(--bg);border-radius:46px;position:relative;overflow:hidden;box-shadow:0 0 0 11px #111,0 0 0 13px #333,0 30px 80px rgba(0,0,0,.6)}
+@media (max-width:500px){body{background:var(--bg);display:block}.status{display:none}.screen{padding-top:env(safe-area-inset-top)}#phone{width:100%;height:100vh;height:100dvh;border-radius:0;box-shadow:none}.notch{display:none}}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:120px;height:32px;background:#000;border-radius:20px;z-index:100}
+.status{height:44px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:6px 28px 0;font-size:14px;font-weight:600;flex-shrink:0}
+.status .ic{display:flex;gap:6px;align-items:center}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
+.screen.on{display:flex;animation:fade .25s ease}
+@keyframes fade{from{opacity:.0;transform:translateX(12px)}to{opacity:1;transform:none}}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px 40px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.topbar{display:flex;align-items:center;height:50px;padding:0 14px;background:#fff;border-bottom:1px solid var(--ln);flex-shrink:0;gap:8px}
+.topbar .ttl{flex:1;text-align:center;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.topbar .ttl img{height:18px}
+.iconbtn{width:34px;height:34px;border:none;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx);border-radius:50%}
+.iconbtn:active{background:#eee}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;position:relative;flex-shrink:0;background:linear-gradient(135deg,#6b7a8f,#3b4656)}
+.av.dot::after{content:"";position:absolute;top:0;right:0;width:9px;height:9px;background:#E5243B;border:2px solid #fff;border-radius:50%}
+.av.lg{width:64px;height:64px;font-size:22px}.av.xl{width:92px;height:92px;font-size:30px}.av.sm{width:28px;height:28px;font-size:11px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;border:none;border-radius:10px;background:var(--m);color:#fff;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.btn:active{background:var(--md);transform:scale(.99)}
+.btn.ol{background:#fff;color:var(--m);border:1.5px solid var(--m)}
+.btn.gh{background:var(--ml);color:var(--m)}
+.btn.sm{height:34px;font-size:13px;border-radius:8px;width:auto;padding:0 14px}
+.btn.blue{background:var(--blue)}
+.link{color:var(--m);font-weight:600;cursor:pointer;background:none;border:none;font:inherit;font-weight:600}
+label.f{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+.in{width:100%;height:46px;border:1px solid var(--ln);border-radius:10px;background:#fff;padding:0 14px;font-size:14px;font-family:inherit;color:var(--tx);outline:none;transition:.15s}
+.in:focus{border-color:var(--m);box-shadow:0 0 0 3px rgba(220,20,60,.1)}
+textarea.in{height:90px;padding:12px 14px;resize:none}
+select.in{appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.6' fill='none'/%3E%3C/svg%3E") no-repeat right 14px center}
+.srch{position:relative}.srch .in{padding-right:42px}.srch svg{position:absolute;right:13px;top:13px;color:var(--m)}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}
+.mu{color:var(--mu);font-size:12px}.b{font-weight:700}.sm{font-size:13px}.xs{font-size:11px}
+.h2{font-size:22px;font-weight:800;letter-spacing:-.3px}.h3{font-size:16px;font-weight:700}.sec{font-size:15px;font-weight:700;margin:18px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.sec .link{font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pill{display:inline-flex;align-items:center;height:30px;padding:0 14px;border:1px solid var(--ln);border-radius:16px;background:#fff;font-size:12px;margin:0 6px 8px 0;cursor:pointer;font-weight:500}
+.pill.on,.pill:active{background:var(--m);border-color:var(--m);color:#fff}
+.tag{display:inline-block;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:600}
+.hs{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}.hs::-webkit-scrollbar{display:none}
+.hs>*{flex-shrink:0}
+/* bottom nav */
+.nav{height:78px;background:#fff;border-top:1px solid var(--ln);display:flex;align-items:flex-start;justify-content:space-around;padding:10px 6px 0;flex-shrink:0;position:relative}
+.nav button{background:none;border:none;color:#9a9aa3;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;width:62px;font-family:inherit}
+.nav button.on{color:var(--m)}
+.nav .center{width:64px;height:64px;border-radius:50%;background:var(--m);color:#fff;margin-top:-30px;box-shadow:0 6px 16px rgba(220,20,60,.4);border:5px solid #fff;justify-content:center}
+.nav .center:active{background:var(--md)}
+/* splash */
+#s-splash{background:#F8F7F8;align-items:center;justify-content:center}
+.load{width:200px;height:6px;background:#e3e3e6;border-radius:3px;overflow:hidden;margin-top:40px}
+.load i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6a5cff,#3c8dff);border-radius:3px;animation:ld 2.2s ease forwards}
+@keyframes ld{to{width:100%}}
+.spin{width:22px;height:22px;border:3px solid #ddd;border-top-color:#6a5cff;border-radius:50%;animation:sp .8s linear infinite;margin-top:18px}
+@keyframes sp{to{transform:rotate(360deg)}}
+#s-welcome{align-items:center;justify-content:center;background:linear-gradient(rgba(255,255,255,.86),rgba(255,255,255,.92)),radial-gradient(circle at 70% 30%,#e9d6da,#f8f8f8 60%);cursor:pointer}
+.docbg{position:absolute;inset:0;opacity:.16;display:flex;align-items:flex-end;justify-content:center}
+.logo{width:210px}
+.auth{padding:24px 24px 30px}
+.auth .h2{margin-top:8px}
+.rolegrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.role{background:#fff;border-radius:16px;box-shadow:var(--sh);padding:22px 10px;text-align:center;border:2px solid transparent;cursor:pointer;transition:.15s}
+.role.on{border-color:var(--m);background:#fff7f8}
+.role .ri{width:64px;height:64px;margin:0 auto 10px;border-radius:50%;background:var(--ml);display:flex;align-items:center;justify-content:center;color:var(--m)}
+.role b{font-size:14px}
+.radio{display:flex;gap:22px;margin-top:6px}
+.radio label{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.radio input{accent-color:var(--m);width:18px;height:18px}
+.phone{display:flex;gap:8px}.cc{display:flex;align-items:center;gap:6px;padding:0 12px;border:1px solid var(--ln);border-radius:10px;background:#fff;font-size:14px;height:46px;white-space:nowrap}
+.otp{display:flex;gap:14px;justify-content:center;margin:24px 0}
+.otp input{width:58px;height:62px;text-align:center;font-size:24px;font-weight:700;border:1.5px solid var(--ln);border-radius:12px;outline:none;background:#fff;font-family:inherit}
+.otp input:focus{border-color:var(--m)}
+/* stepper */
+.stepper{position:relative;display:flex;overflow-x:auto;background:#fff;padding:12px 8px 10px;gap:0;flex-shrink:0;border-bottom:1px solid var(--ln);scrollbar-width:none}
+.stepper::-webkit-scrollbar{display:none}
+.st{flex:0 0 92px;text-align:center;position:relative;cursor:pointer}
+.st::before{content:"";position:absolute;top:15px;left:-50%;width:100%;height:2px;background:#ddd;z-index:0}
+.st:first-child::before{display:none}
+.st.done::before,.st.on::before{background:var(--m)}
+.st i{width:30px;height:30px;border-radius:50%;background:#e4e4e8;color:#777;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;font-style:normal;font-size:12px;font-weight:700;position:relative;z-index:1}
+.st.on i{background:var(--m);color:#fff;box-shadow:0 0 0 4px var(--ml)}
+.st.done i{background:var(--m);color:#fff}
+.st span{font-size:10px;color:var(--mu);display:block}
+.st.on span{color:var(--m);font-weight:700}
+.wfoot{padding:12px 16px;background:#fff;border-top:1px solid var(--ln);display:flex;gap:10px;flex-shrink:0}
+.upl{border:2px dashed #F2A0B1;border-radius:12px;background:#fffafb;padding:22px;text-align:center;cursor:pointer;color:var(--m)}
+.upl .mu{margin-top:4px}
+.kpi{background:#fff;border-radius:12px;box-shadow:var(--sh);padding:12px;min-height:128px}
+.kpi .t{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.kpi .v{font-size:18px;font-weight:800;margin-top:4px}
+.ast{color:#E0203A;font-size:20px;letter-spacing:2px;font-weight:900}
+.ast .off{color:#e6e6e9}
+.pillcard{display:flex;gap:12px;align-items:center}
+.pillimg{width:54px;height:54px;border-radius:12px;background:var(--ml);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* toggles */
+.tg{position:relative;width:50px;height:30px;flex-shrink:0}
+.tg input{opacity:0;width:0;height:0}
+.tg span{position:absolute;inset:0;background:#e2e2e6;border-radius:15px;transition:.2s;cursor:pointer}
+.tg span::before{content:"";position:absolute;width:26px;height:26px;left:2px;top:2px;background:#fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:.2s}
+.tg input:checked+span{background:#34C759}
+.tg input:checked+span::before{transform:translateX(20px)}
+/* home */
+.ring{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.ring .c{position:absolute;text-align:center}
+.banner{border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.banner.good{background:linear-gradient(135deg,#DC143C,#F25270);color:#fff}
+.banner.warn{background:#FFF4E5;color:#8a5300;border:1px solid #ffd9a6}
+.check{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0f3;font-size:13px;cursor:pointer}
+.check:last-child{border:none}
+.cb{width:20px;height:20px;border-radius:6px;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.check.on .cb{background:var(--m);border-color:var(--m)}
+.check.on .lbl{text-decoration:line-through;color:var(--mu)}
+.medc{width:150px;background:#fff;border-radius:12px;box-shadow:var(--sh);padding:12px}
+.bar{height:8px;border-radius:4px;background:#eee;overflow:hidden}.bar i{display:block;height:100%;background:var(--m);border-radius:4px}
+.modal{position:absolute;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;z-index:50}
+.modal.on{display:flex;animation:fadeb .2s}
+@keyframes fadeb{from{opacity:0}}
+.sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;max-height:85%;display:flex;flex-direction:column;animation:up .25s ease}
+@keyframes up{from{transform:translateY(100%)}}
+.sheet .hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--ln)}
+.sheet .bd{overflow-y:auto;padding:6px 16px 20px}
+.grab{width:40px;height:5px;background:#ddd;border-radius:3px;margin:8px auto 0}
+.tgrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f1f1f4;font-size:14px}
+.tgrow .h{color:#bbb}
+/* community */
+.topic{display:flex;align-items:center;gap:12px;padding:10px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--sh);cursor:pointer}
+.timg{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.hero{height:170px;border-radius:14px;display:flex;align-items:flex-end;padding:16px;color:#fff;font-size:24px;font-weight:800;position:relative;overflow:hidden;margin-bottom:12px}
+.hero .emo{position:absolute;right:10px;top:4px;font-size:110px;opacity:.35}
+.post .ph{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.post p{font-size:13px;line-height:1.5;color:#444}
+.post .q{font-weight:700;font-size:14px;margin-bottom:6px;color:var(--tx)}
+.acts{display:flex;gap:18px;margin-top:10px;color:var(--mu);font-size:12px}
+.acts span{display:flex;align-items:center;gap:5px;cursor:pointer}
+.acts span.on{color:var(--m)}
+.seg{display:flex;background:#ececf0;border-radius:10px;padding:3px;margin-bottom:14px}
+.seg button{flex:1;height:34px;border:none;background:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;color:#555;font-family:inherit}
+.seg button.on{background:#fff;color:var(--m);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prof{background:#fff;border-radius:12px;box-shadow:var(--sh);padding:16px 10px;text-align:center}
+.prof .av{margin:0 auto 8px}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:76%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.4}
+.msg.r{background:#ECECEF;align-self:flex-start;border-bottom-left-radius:4px}
+.msg.s{background:var(--m);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg small{display:block;font-size:10px;opacity:.6;margin-top:3px}
+.composer{display:flex;gap:8px;padding:10px 12px 14px;background:#fff;border-top:1px solid var(--ln)}
+.composer .in{border-radius:22px;height:42px}
+.send{width:42px;height:42px;border-radius:50%;background:var(--m);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+/* university */
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--ln);flex-shrink:0}
+.tabs button{flex:1;height:44px;background:none;border:none;font-weight:600;font-size:14px;color:var(--mu);border-bottom:2.5px solid transparent;cursor:pointer;font-family:inherit}
+.tabs button.on{color:var(--m);border-color:var(--m)}
+.thumb{border-radius:12px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff}
+.thumb .emo{font-size:56px;opacity:.85}
+.play{position:absolute;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:var(--m);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.dur{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.65);font-size:11px;padding:2px 6px;border-radius:5px}
+.live{position:absolute;left:10px;top:10px;background:#E5243B;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;display:flex;align-items:center;gap:5px}
+.live i{width:7px;height:7px;background:#fff;border-radius:50%;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.2}}
+.art{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #eee;cursor:pointer}
+.art .thumb{width:92px;height:76px;flex-shrink:0}
+/* telehealth */
+.spec{border-radius:14px;height:130px;position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:flex-end;padding:12px;color:#fff;font-weight:700;font-size:15px}
+.spec .emo{position:absolute;right:-6px;top:0;font-size:84px}
+.stat{background:#fff;border-radius:12px;box-shadow:var(--sh);padding:14px;text-align:center;cursor:pointer;border-top:4px solid}
+.stat .n{font-size:28px;font-weight:800;margin-top:4px}
+.doc{display:flex;gap:12px;align-items:center}
+.star{color:#F5A623}
+.days{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:2px 16px 8px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:0 0 56px;height:72px;background:#fff;border-radius:12px;box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--mu)}
+.day b{font-size:19px;color:var(--tx);margin-top:2px}
+.day.on{background:var(--m);color:#fdd}.day.on b{color:#fff}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{height:38px;border-radius:8px;background:#fff;border:1px solid var(--ln);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.slot.on{background:var(--m);color:#fff;border-color:var(--m)}
+.slot.x{color:#ccc;text-decoration:line-through;pointer-events:none}
+.st-Completed{color:#1f9d55;background:#e3f6ea}.st-Missed{color:#d0203a;background:#fde6e9}.st-Cancelled{color:#666;background:#ececef}.st-Upcoming{color:#c2185b;background:#fde4ef}
+.toast{position:absolute;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:rgba(30,30,34,.94);color:#fff;padding:11px 18px;border-radius:22px;font-size:13px;opacity:0;transition:.25s;z-index:200;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.phrrow{display:flex;align-items:center;gap:12px;padding:13px 0;cursor:pointer;position:relative}
+.phrrow .dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--m);display:flex;align-items:center;justify-content:center;background:#fff;z-index:1;flex-shrink:0;color:#fff}
+.phrrow.done .dot{background:var(--m)}
+.phrlist{position:relative}.phrlist::before{content:"";position:absolute;left:11px;top:20px;bottom:20px;width:2px;background:var(--ml)}
+.phrrow .nm{flex:1;font-size:14px;font-weight:500}
+.chev{color:#bbb}
+.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f1f4;font-size:13px}
+.kv:last-child{border:none}
+.lc{font-size:13px;line-height:1.55;color:#444}
+.lc ol{padding-left:18px}
+</style></head><body><div id="phone"><div class="notch"></div><div class="modal" id="modal" onclick="if(event.target===this)closeSheet()"><div class="sheet" id="sheet"></div></div><div class="toast" id="toast"></div></div><script>
+const M='#DC143C',ML='#FDE6EA';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const sv=(p,s=22,w=1.9)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const I={
+back:sv('<path d="M15 18l-6-6 6-6"/>'),chev:sv('<path d="M9 18l6-6-6-6"/>',18),
+search:sv('<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',20),
+home:sv('<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',24),
+chat:sv('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14h4.5"/>',24),
+cap:sv('<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/><path d="M22 9v5"/>',24),
+badge:sv('<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7.5 17c1-2.2 2.6-3 4.5-3s3.5.8 4.5 3"/><path d="M10 3v2h4V3"/>',24),
+tele:sv('<path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/><path d="M13 7h2l1-2 1.5 4 1-2H21"/>',28,2),
+pen:sv('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',18),
+bell:sv('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',18),
+share:sv('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',18),
+heart:sv('<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>',16),
+cmt:sv('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',16),
+send:sv('<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',18),
+plus:sv('<path d="M12 5v14M5 12h14"/>',18),check:sv('<path d="M20 6L9 17l-5-5"/>',14,3),
+up:sv('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/>',28),
+play:'<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
+video:sv('<rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-4v12l-6-4"/>',18),
+phone:sv('<path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',18),
+drag:sv('<path d="M4 8h16M4 12h16M4 16h16"/>',18),cal:sv('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',16),
+clock:sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',16),x:sv('<path d="M18 6L6 18M6 6l12 12"/>',20),
+user:sv('<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',30),
+users:sv('<circle cx="9" cy="8" r="3.5"/><path d="M2 20c1-3.5 3.6-5 7-5s6 1.5 7 5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4.2 1.3 5 4"/>',30),
+care:sv('<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/><path d="M9 12h2l1-2 1.5 4 1-2h1.5"/>',30),
+shield:sv('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',30),
+walk:'🚶',settings:sv('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',18)
 };
-
-function searchMed() {
-  const q = (document.getElementById('medSearch').value || '').toLowerCase().trim();
-  const results = document.getElementById('medResults');
-  if (!q) { results.innerHTML = ''; return; }
-  const matches = Object.keys(nihDrugs).filter(k => k.includes(q) || nihDrugs[k].name.toLowerCase().includes(q));
-  if (matches.length === 0) {
-    results.innerHTML = `<div class="card">No match in NIH sample data. Try Lisinopril, Metformin, Atorvastatin, etc.</div>`;
-    return;
-  }
-  results.innerHTML = matches.map(k => {
-    const d = nihDrugs[k];
-    return `<div class="card" style="display:flex; gap:12px; align-items:center; cursor:pointer;" onclick="addMed('${k}')">
-      <img src="${d.image}" style="width:60px;height:60px;object-fit:contain;border-radius:8px;background:#f9f9f9;" alt="Pill">
-      <div>
-        <strong>${d.name}</strong><br>
-        <small>${d.strength} · ${d.form}</small><br>
-        <small style="color:#666;">Imprint: ${d.imprint}</small>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function addMed(key) {
-  const d = nihDrugs[key];
-  if (!d) return;
-  phrData.medications = phrData.medications || [];
-  if (!phrData.medications.find(m => m.name === d.name)) {
-    phrData.medications.push({ ...d });
-    localStorage.setItem('phrData', JSON.stringify(phrData));
-  }
-  document.getElementById('medSearch').value = '';
-  document.getElementById('medResults').innerHTML = '';
-  renderPhrSection('meds');
-  track('med_added', d.name);
-}
-
-function processPillPhoto(input) {
-  if (!input.files || !input.files[0]) return;
-  // Simulated OCR + NIH lookup (in production: send image to backend → OCR → RxNorm/RxImage API)
-  const file = input.files[0];
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    // Simulate detecting a common drug from the bottle photo
-    const simulated = Object.keys(nihDrugs)[Math.floor(Math.random() * Object.keys(nihDrugs).length)];
-    const d = nihDrugs[simulated];
-    const results = document.getElementById('medResults');
-    results.innerHTML = `
-      <div class="card">
-        <div style="font-size:13px; color:#666; margin-bottom:8px;">Camera photo analyzed (simulated OCR)</div>
-        <div style="display:flex; gap:12px; align-items:center; cursor:pointer;" onclick="addMed('${simulated}')">
-          <img src="${e.target.result}" style="width:70px;height:70px;object-fit:cover;border-radius:8px;" alt="Your photo">
-          <div>
-            <strong>Detected: ${d.name}</strong><br>
-            <small>${d.strength} · ${d.form}</small><br>
-            <small>Tap to add (NIH data)</small>
-          </div>
-        </div>
-      </div>`;
-  };
-  reader.readAsDataURL(file);
-}
-
-function processInsurancePhoto(input, side) {
-  if (!input.files || !input.files[0]) return;
-  const status = document.getElementById('insPhotoStatus');
-  status.innerHTML = `Processing ${side} of insurance card...`;
-  // Simulated Textract / OCR (in production: send to Amazon Textract or similar)
-  setTimeout(() => {
-    if (side === 'front') {
-      document.getElementById('insCo').value = 'Blue Cross Blue Shield';
-      document.getElementById('memberId').value = 'XYZ123456789';
-      document.getElementById('group').value = 'GRP-98765';
-      phrData.insCo = 'Blue Cross Blue Shield';
-      phrData.memberId = 'XYZ123456789';
-      phrData.group = 'GRP-98765';
-    } else {
-      document.getElementById('cs').value = '1-800-555-0199';
-      phrData.cs = '1-800-555-0199';
-    }
-    localStorage.setItem('phrData', JSON.stringify(phrData));
-    status.innerHTML = `<span style="color:green;">✓ ${side === 'front' ? 'Front' : 'Back'} processed — fields auto-populated</span>`;
-    track('insurance_photo', side);
-  }, 800);
-}
-
-function removeMed(name) {
-  phrData.medications = (phrData.medications || []).filter(m => m.name !== name);
-  localStorage.setItem('phrData', JSON.stringify(phrData));
-  renderPhrSection('meds');
-}
-
-function renderCommunity() {
-  const status = document.getElementById('chatStatus');
-  if (chatBanned) {
-    status.innerHTML = '⚠️ Community posting is paused — account under review. PHR and Education remain available.';
-  } else {
-    status.innerHTML = '';
-  }
-  document.getElementById('chatRooms').innerHTML = `
-    <div class="card" style="margin:6px 0;">Diabetes Support • 12 online</div>
-    <div class="card" style="margin:6px 0;">Cancer Caregivers • 8 online</div>
-    <div class="card" style="margin:6px 0;">General Wellness • 24 online</div>
-  `;
-  document.getElementById('communityArticles').innerHTML = `
-    <div>Shared story: Living with hypertension</div>
-    <div>Article: Managing stress with similar conditions</div>
-  `;
-}
-
-let chatBanned = false;
-let chatWarnings = 0;
-
-const bannedWords = [
-  'fuck','shit','asshole','bitch','damn','cunt','dick','pussy','bastard','slut','whore',
-  'kill','murder','threat','threaten','bomb','shoot','attack','hate','die','suicide',
-  'stupid','idiot','moron','retard' // expand as needed; in production use a proper moderation API
+const AVC=['#6b7a8f,#3b4656','#e57373,#c2185b','#64b5f6,#1565c0','#81c784,#2e7d32','#ffb74d,#ef6c00','#ba68c8,#6a1b9a','#4db6ac,#00695c','#f06292,#ad1457'];
+const av=(n,cls='',i=0)=>`<div class="av ${cls}" style="background:linear-gradient(135deg,${AVC[(i||n.length)%AVC.length]})">${n.split(' ').filter(w=>w[0]&&w[0]===w[0].toUpperCase()&&w!=='Dr.').map(w=>w[0]).slice(0,2).join('')}</div>`;
+const me=()=>`<div class="av dot" style="background:linear-gradient(135deg,#DC143C,#7a0a20)" onclick="go('profile')">JD</div>`;
+const tb=(t,opt={})=>`${sbar()}<div class="topbar">${opt.noback?'<div style="width:34px"></div>':`<button class="iconbtn" onclick="back()">${I.back}</button>`}<div class="ttl">${opt.logo?'<img src="assets/logo.png" alt="">':''}${t}</div>${opt.right||me()}</div>`;
+const NAV=[['home','home','Home'],['community','chat','Community'],['telehealth','tele',''],['university','cap','University'],['phr','badge','PHR']];
+const nav=a=>`<div class="nav">${NAV.map(([id,ic,l])=>id==='telehealth'?`<button class="center" onclick="go('telehealth')" aria-label="TeleHealth">${I.tele}</button>`:`<button class="${a===id?'on':''}" onclick="go('${id}')">${I[ic]}<span>${l}</span></button>`).join('')}</div>`;
+const sbar=()=>`<div class="status"><span>9:41</span><span class="ic"><svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#111"/><rect x="5" y="5" width="3" height="6" rx="1" fill="#111"/><rect x="10" y="2.5" width="3" height="8.5" rx="1" fill="#111"/><rect x="15" y="0" width="3" height="11" rx="1" fill="#111"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="#111" opacity=".5"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#111"/><rect x="23.5" y="4" width="1.5" height="4" rx=".7" fill="#111" opacity=".5"/></svg></span></div>`;
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1900)}
+function ring(p,size,stroke,color,inner='',track='#eee'){const r=(size-stroke)/2,c=2*Math.PI*r;return `<div class="ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="${track}" stroke-width="${stroke}" fill="none"/><circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="${color}" stroke-width="${stroke}" fill="none" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p)}"/></svg><div class="c">${inner}</div></div>`}
+function wave(w=150,h=46,color=M){let d='M0 '+h/2;const pat=[0,0,0,-4,4,0,-20,22,-6,0,0,3,0,0];let x=0;while(x<w){for(const y of pat){x+=w/56;d+=` L${x.toFixed(1)} ${(h/2+y*h/50).toFixed(1)}`}}return `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="${color}" stroke-width="1.8"/></svg>`}
+function line(vals,w=150,h=50,color=M,fill=true){const mx=Math.max(...vals),mn=Math.min(...vals),pts=vals.map((v,i)=>[i*w/(vals.length-1),h-4-(v-mn)/(mx-mn||1)*(h-10)]);const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');return `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${fill?`<path d="${d} L${w} ${h} L0 ${h}Z" fill="${color}" opacity=".12"/>`:''}<path d="${d}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.4" fill="#fff" stroke="${color}" stroke-width="1.6"/>`).join('')}</svg>`}
+function bars(vals,labels,h=90,color=M,hl=-1){const mx=Math.max(...vals);return `<div style="display:flex;align-items:flex-end;gap:8px;height:${h+18}px">${vals.map((v,i)=>`<div style="flex:1;text-align:center"><div style="height:${v/mx*h}px;background:${i===hl?color:color+'55'};border-radius:5px 5px 2px 2px;${i===hl?'':''}"></div><div class="xs mu" style="margin-top:4px">${labels[i]}</div></div>`).join('')}</div>`}
+function pie(data,size=170){let a=0;const tot=data.reduce((s,d)=>s+d[1],0),r=size/2;return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${data.map(([l,v,c])=>{const a0=a,a1=a+v/tot*Math.PI*2;a=a1;const x0=r+r*Math.sin(a0),y0=r-r*Math.cos(a0),x1=r+r*Math.sin(a1),y1=r-r*Math.cos(a1),m=(a0+a1)/2;return `<path d="M${r} ${r} L${x0} ${y0} A${r} ${r} 0 ${a1-a0>Math.PI?1:0} 1 ${x1} ${y1}Z" fill="${c}" stroke="#fff" stroke-width="2"/><text x="${r+r*.64*Math.sin(m)}" y="${r-r*.64*Math.cos(m)}" fill="#fff" font-size="10" font-weight="700" text-anchor="middle">${l}</text><text x="${r+r*.64*Math.sin(m)}" y="${r-r*.64*Math.cos(m)+12}" fill="#fff" font-size="9" text-anchor="middle">${Math.round(v/tot*100)}%</text>`}).join('')}</svg>`}
+const S={role:'Primary User',step:0,stack:[],hw:{},thread:null,doc:null,appt:null,topic:'Arthritis',uni:'Articles',slotT:'Morning',slot:'10:30 AM',day:2,done:new Set([0,1,2,3,4,5,6,7]),chats:{}};
+const R={};
+/* ---------- onboarding ---------- */
+R.splash=()=>`<img class="logo" src="assets/logo.png" alt="myHub4Health"><div class="load"><i></i></div><div class="spin"></div>`;
+R.welcome=()=>`<div class="docbg">${'<svg width="360" height="520" viewBox="0 0 200 290"><circle cx="100" cy="70" r="40" fill="#7a2030"/><path d="M20 290c0-80 30-130 80-130s80 50 80 130z" fill="#7a2030"/><path d="M70 170c0 40 15 60 30 70M130 170c0 40-15 60-30 70" stroke="#fff" stroke-width="5" fill="none"/><circle cx="100" cy="245" r="9" fill="#fff"/></svg>'}</div><div style="position:relative;text-align:center"><img class="logo" style="width:240px" src="assets/logo.png" alt=""><div class="mu" style="margin-top:40px">Tap anywhere to continue</div></div>`;
+R.login=()=>`${sbar()}<div class="scroll auth"><img src="assets/logo.png" style="width:120px;display:block;margin:10px auto 26px"><div class="h2">Hi there, Welcome!</div><div class="mu" style="font-size:14px;margin-top:4px">Login to your account</div>
+<label class="f">Email Address</label><input class="in" type="email" placeholder="enter email address" value="jonathan@goldenguardian.org">
+<label class="f">Password</label><input class="in" type="password" placeholder="enter password" value="password123">
+<div style="text-align:right;margin:10px 0 22px"><button class="link sm" onclick="toast('Password reset link sent to your email')">Forgot password?</button></div>
+<button class="btn" onclick="go('home')">Login</button>
+<div class="row" style="margin:22px 0;gap:10px"><div style="flex:1;height:1px;background:var(--ln)"></div><span class="mu">or continue with</span><div style="flex:1;height:1px;background:var(--ln)"></div></div>
+<div class="row"><button class="btn ol" onclick="toast('Apple sign-in (demo)')"> Apple</button><button class="btn ol" onclick="toast('Google sign-in (demo)')">G&nbsp; Google</button></div>
+<p class="sm" style="text-align:center;margin-top:26px">New to myHub4Health? <button class="link" onclick="go('roles')">Create new account</button></p></div>`;
+const ROLES=[['Primary User','user'],['Family member','users'],['Caregiver','care'],['Health insurance','shield']];
+R.roles=()=>`${tb('')}<div class="scroll auth"><div class="h2">Select Your Role</div><div class="mu" style="font-size:14px;margin-top:6px">Choose how you'll use myHub4Health. You can add more roles later.</div>
+<div class="rolegrid">${ROLES.map(([n,ic])=>`<div class="role ${S.role===n?'on':''}" onclick="S.role='${n}';render('roles')"><div class="ri">${I[ic]}</div><b>${n}</b></div>`).join('')}</div>
+<div style="height:40px"></div><button class="btn" onclick="go('register')">Continue</button></div>`;
+R.register=()=>`${tb('')}<div class="scroll auth" style="padding-top:8px"><div class="h2">Create New Account</div><div class="mu" style="font-size:14px;margin-top:4px">Registering as <b style="color:var(--m)">${S.role}</b></div>
+<label class="f">Full Name</label><input class="in" placeholder="enter fullname" value="Jonathan Davis">
+<label class="f">Email Address</label><input class="in" placeholder="enter email address" value="jonathan@goldenguardian.org">
+<label class="f">Password</label><input class="in" type="password" placeholder="enter password" value="password123">
+<label class="f">Creating account for</label><div class="radio"><label><input type="radio" name="fr" checked> Self</label><label><input type="radio" name="fr"> Others</label></div>
+<label class="f">Date of Birth</label><input class="in" type="date" value="1982-06-14">
+<div style="height:26px"></div><button class="btn" onclick="go('verify')">Create</button>
+<p class="sm" style="text-align:center;margin-top:18px">Already have account? <button class="link" onclick="go('login')">Login</button></p></div>`;
+R.verify=()=>`${tb('')}<div class="scroll auth"><div style="width:84px;height:84px;border-radius:50%;background:var(--ml);color:var(--m);display:flex;align-items:center;justify-content:center;margin:10px auto 20px">${sv('<rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/>',40)}</div>
+<div class="h2" style="text-align:center">Verify Phone Number</div><div class="mu" style="text-align:center;font-size:14px;margin-top:6px">We'll text you a 4-digit code to confirm it's you.</div>
+<label class="f">Phone Number</label><div class="phone"><div class="cc">🇺🇸 +1 ▾</div><input class="in" type="tel" value="(312) 555-0148"></div>
+<div id="otpwrap" style="display:${S.sent?'block':'none'}"><div class="otp">${[0,1,2,3].map(i=>`<input maxlength="1" inputmode="numeric" oninput="if(this.value&&this.nextElementSibling)this.nextElementSibling.focus()" value="${S.sent?'4827'[i]:''}">`).join('')}</div>
+<p class="sm" style="text-align:center">Didn't receive code? <button class="link" onclick="toast('New code sent')">Resend Code</button></p><div style="height:20px"></div><button class="btn" onclick="go('success')">Confirm</button></div>
+<div style="display:${S.sent?'none':'block'};margin-top:30px"><button class="btn" onclick="S.sent=1;render('verify');toast('Code sent to (312) 555-0148')">Send Code</button></div></div>`;
+R.success=()=>`${sbar()}<div class="scroll auth" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+<svg width="220" height="220" viewBox="0 0 220 220"><circle cx="110" cy="110" r="100" fill="${ML}"/><path d="M58 150c-10-20-6-40 4-54l20 4 0 70c-12 0-20-8-24-20z" fill="#f2c4a8"/><rect x="76" y="40" width="76" height="140" rx="12" fill="#2b2b33"/><rect x="82" y="50" width="64" height="118" rx="6" fill="#fff"/><circle cx="114" cy="104" r="24" fill="${M}"/><path d="M103 104l8 8 15-16" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 120c8-6 18-6 22 0s2 14-6 18M62 138c8-4 16-2 20 4M66 156c6-2 12 0 14 6" stroke="#e0a988" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="40" cy="60" r="5" fill="${M}" opacity=".5"/><circle cx="184" cy="76" r="4" fill="${M}" opacity=".6"/><path d="M176 150l6 6m0-6l-6 6" stroke="${M}" stroke-width="2.5"/></svg>
+<div class="h2" style="margin-top:24px">Congratulations!!</div><div style="font-size:16px;margin-top:8px;color:#444">Your Account has been Created!</div>
+<div class="mu" style="font-size:13px;margin:14px 20px 34px">Next, let's set up your myHealth Wallet so your care team has everything they need.</div>
+<button class="btn" onclick="go('phr')">Continue</button></div>`;
+R.profile=()=>`${tb('My Profile')}<div class="scroll"><div class="card" style="text-align:center;padding:24px">${av('Jonathan Davis','xl',0).replace('<div class="av','<div style="margin:0 auto 10px;background:linear-gradient(135deg,#DC143C,#7a0a20)" class="av')}<div class="h3">Jonathan Davis</div><div class="mu">${S.role} · Member since 2026</div></div>
+<div class="card">${[['myHealth Wallet','phr'],['My Appointments','appts'],['Messages','chatlist'],['Home Dashboard','home']].map(([n,r])=>`<div class="kv" style="padding:13px 0;cursor:pointer" onclick="go('${r}')"><span>${n}</span><span class="chev">${I.chev}</span></div>`).join('')}</div>
+<div class="card">${['Notifications','Privacy & Data Sharing','Connected Devices','Help & Support'].map(n=>`<div class="kv" style="padding:13px 0" onclick="toast('${n} (demo)')"><span>${n}</span><span class="chev">${I.chev}</span></div>`).join('')}</div>
+<button class="btn ol" onclick="S.stack=[];go('login')">Log Out</button></div>${nav('phr')}`;
+/* ---------- wallet ---------- */
+const STEPS=['Demographics','Emergency Contact','Insurance Info','Preferred Contacts','Physical Health','Allergies','Surgeries','Notes','Devices','Routine','Mental Health','Concerns','Others'];
+const fld=(l,v='',ph='')=>`<div><label class="f">${l}</label><input class="in" value="${v}" placeholder="${ph||'Enter '+l.toLowerCase()}"></div>`;
+const sel=(l,opts,v)=>`<div><label class="f">${l}</label><select class="in">${opts.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select></div>`;
+const srch=(l,ph,v='')=>`<div><label class="f">${l}</label><div class="srch"><input class="in" placeholder="${ph}" value="${v}">${I.search}</div></div>`;
+const sevr=n=>`<span class="ast">${[1,2,3,4].map(i=>`<span class="${i<=n?'':'off'}">✱</span>`).join('')}</span>`;
+const SEVL=['','Mild Reaction','Moderate Reaction','Severe Reaction','Urgent Reaction'];
+const pillsvg=c=>`<svg width="34" height="34" viewBox="0 0 34 34"><g transform="rotate(-35 17 17)"><rect x="3" y="11" width="28" height="12" rx="6" fill="#fff" stroke="${c}" stroke-width="1.5"/><path d="M17 11h8a6 6 0 0 1 0 12h-8z" fill="${c}"/></g></svg>`;
+const W=[
+()=>`<div class="h3">Demographics</div><div class="mu">Basic information about you</div><div class="grid2">${fld('First Name','Jonathan')}${fld('Last Name','Davis')}</div>${fld('Street Address','1420 W Lakeview Ave')}<div class="grid2">${fld('City','Chicago')}${fld('State','IL')}</div><div class="grid2">${fld('Zip Code','60614')}${sel('Gender',['Male','Female','Non-binary','Prefer not to say'],'Male')}</div>${sel('Veteran Status',['Select','Not a Veteran','Veteran','Active Duty','Reserve'],'Not a Veteran')}${sel('Religious Affiliation',['Select','Christian','Catholic','Jewish','Muslim','Hindu','Buddhist','None','Other'],'Christian')}${sel('Preferred Language',['English','Spanish','Polish','Chinese'],'English')}`,
+()=>`<div class="h3">Emergency Contact</div><div class="mu">Who should we reach in an emergency?</div>${fld('Contact Name','Sarah Davis')}<div class="grid2">${fld('Relationship','Spouse')}${fld('Phone','(312) 555-0199')}</div>${fld('Law Enforcement','Chicago PD – 19th District')}${fld('Fire','Engine Co. 55')}${fld('Ambulance','911 / Superior Ambulance')}
+<div class="sec">Care Providers</div>${srch('Primary Care Provider','Search Primary Care Provider','Dr. Allison Kim, MD')}${srch('Speciality','Search Speciality','Cardiology')}${srch('Preferred Hospital','Search Hospital','Northwestern Memorial Hospital')}`,
+()=>`<div class="h3">Insurance Info</div><div class="mu">Upload your card or enter details</div><div class="grid2" style="margin-top:14px"><div class="upl" onclick="this.innerHTML='✅<div class=mu>front_card.jpg</div>'">${I.up}<div class="b sm">Front of Card</div><div class="mu">Tap to upload</div></div><div class="upl" onclick="this.innerHTML='✅<div class=mu>back_card.jpg</div>'">${I.up}<div class="b sm">Back of Card</div><div class="mu">Tap to upload</div></div></div>${sel('Insurance Provider',['Blue Cross Blue Shield of IL','Aetna','UnitedHealthcare','Cigna','Humana','Medicare'],'Blue Cross Blue Shield of IL')}${fld('Policy Number','XGH 884210337')}${fld('Group Number','00927-B')}<div class="grid2">${fld('Copay','$25.00')}${fld('Deductible','$1,500')}</div>${fld('Policy Holder','Jonathan Davis')}`,
+()=>`<div class="h3">Preferred Contacts</div><div class="mu">People and places in your support network</div>${[['Spouse','Sarah Davis · (312) 555-0199'],['Child','Emma Davis · (312) 555-0123'],['Parent','Robert Davis · (708) 555-0187'],['Preferred Pharmacies','Walgreens – 2550 N Clark St'],['Neighbors','Mike Torres · (312) 555-0164'],['Boss','Linda Park · (312) 555-0110'],['Religious Contact','Pastor James · Grace Church']].map(([l,v])=>fld(l,v)).join('')}<button class="btn gh" style="margin-top:16px" onclick="toast('Contact added')">${I.plus} Add another contact</button>`,
+()=>`<div class="h3">Physical Health</div><div class="mu">Conditions, vitals and current prescriptions</div><div style="height:12px"></div>
+${[['Hypertension','Mar 12, 2019','Dr. Allison Kim','Jun 20, 2026'],['Type 2 Diabetes','May 29, 2021','Dr. Noel Haque','Jun 20, 2026'],['Osteoarthritis','Jan 08, 2023','Dr. Noel Haque','Aug 02, 2026']].map(([c,d,p,u])=>`<div class="card" style="border-left:4px solid var(--m)"><div class="b">${c}</div><div class="kv"><span class="mu">Date Diagnosed</span><span>${d}</span></div><div class="kv"><span class="mu">Physician</span><span>${p}</span></div><div class="kv"><span class="mu">Last Reviewed</span><span>${u}</span></div></div>`).join('')}
+<div class="sec">Key Physical Health Indicators <span class="link" onclick="toast('Indicator added')">+ Add</span></div>
+<div class="grid2"><div class="kpi"><div class="t" style="color:var(--m)">♥ Heart Rate</div>${wave()}<div class="v">72 <span class="mu">bpm</span></div></div>
+<div class="kpi" style="text-align:center"><div class="t">BMI</div>${ring(.62,78,9,M,'<b style="font-size:17px">24.9</b><div class="xs mu">Normal</div>')}</div>
+<div class="kpi"><div class="t">⚖️ Weight</div><div class="v">182 <span class="mu">lbs</span></div><input type="range" min="120" max="260" value="182" style="width:100%;accent-color:${M};margin-top:12px" oninput="this.previousElementSibling.innerHTML=this.value+' <span class=mu>lbs</span>'"><div class="row between xs mu"><span>120</span><span>260</span></div></div>
+<div class="kpi"><div class="t">🩸 Blood Pressure</div><div class="v">128/82</div>${line([132,129,135,127,130,126,128],150,48)}</div></div>
+<button class="btn ol" style="margin-top:12px" onclick="const e=$('#fullrep');e.style.display=e.style.display==='none'?'block':'none';this.textContent=e.style.display==='none'?'View Full Report':'Hide Full Report'">View Full Report</button>
+<div id="fullrep" style="display:none;margin-top:12px">
+<div class="card" style="text-align:center"><div class="b">Body Mass Index</div>${ring(.62,150,14,M,'<b style="font-size:26px">24.9</b><div class="xs mu">BMI</div>')}<div class="mu">18.5 – 24.9 is Normal</div></div>
+<div class="card"><div class="row between"><div class="b" style="color:var(--m)">🫁 Respiratory Rate</div><b>14 b/m</b></div><div class="mu">Normal: 12 – 20 b/m</div>${wave(300,50,'#E57373')}</div>
+<div class="card"><div class="row between"><div class="b" style="color:var(--m)">♥ Heart Rate</div><b>72 bpm</b></div><div class="mu">Resting range 55 – 120 b/m</div>${wave(300,60)}</div>
+<div class="card"><div class="row between"><div class="b">🌡 Body Temperature</div><b>98.6 °F</b></div>${line([98.2,98.4,98.9,98.6,98.5,98.7,98.6],300,56,'#F5A623')}</div>
+<div class="card"><div class="b">Blood Glucose (mg/dL)</div>${bars([112,126,104,138,118,109,121],['M','T','W','T','F','S','S'],70,M,3)}</div></div>
+<div class="sec">Current Rx</div>
+${[['Lisinopril','10 mg · Once daily (morning)','Dr. Allison Kim','#DC143C'],['Metformin','500 mg · Twice daily with meals','Dr. Noel Haque','#4A90E2'],['Atorvastatin','20 mg · Once daily (evening)','Dr. Allison Kim','#F5A623']].map(([n,d,p,c])=>`<div class="card pillcard"><div class="pillimg">${pillsvg(c)}</div><div style="flex:1"><div class="b">${n}</div><div class="mu">${d}</div><div class="xs mu">Prescribed by ${p}</div></div><span class="tag st-Completed">Active</span></div>`).join('')}
+${fld('Name of Dispensing Pharmacy','Walgreens – 2550 N Clark St')}`,
+()=>`<div class="h3">Allergies</div><div class="mu">Severity: ${sevr(1)} mild → ${sevr(4)} urgent</div><div style="height:12px"></div>
+${[['Medication','Penicillin','Hives, difficulty breathing','Mar 03, 2024',4],['Food','Peanuts','Swelling, throat tightness','Jan 15, 2025',3],['Environmental','Latex','Skin rash','Jul 22, 2023',2],['Seasonal','Tree Pollen','Sneezing, itchy eyes','Apr 10, 2026',1]].map(([t,n,r,d,s])=>`<div class="card"><div class="row between"><div class="b">${t}</div><div style="text-align:right">${sevr(s)}<div class="xs" style="color:var(--m)">${SEVL[s]}</div></div></div><div class="kv"><span class="mu">Allergen</span><span>${n}</span></div><div class="kv"><span class="mu">Type of Reaction</span><span>${r}</span></div><div class="kv"><span class="mu">Last Reaction</span><span>${d}</span></div></div>`).join('')}<button class="btn gh" onclick="toast('Allergy added')">${I.plus} Add Allergy</button>`,
+()=>`<div class="h3">Surgeries</div><div class="mu">Past procedures and hospital stays</div><div style="height:12px"></div>${[['Arthroscopic Knee Surgery (R)','Sep 14, 2022','Dr. Marcus Lee','Rush University Medical Center','Meniscus repair; full recovery after 10 weeks of physical therapy.'],['Appendectomy','Jun 02, 2009','Dr. Helen Ortiz','Northwestern Memorial','Laparoscopic, no complications.'],['Wisdom Teeth Extraction','Aug 19, 2001','Dr. Paul Chen, DDS','Outpatient','All four removed under local anesthesia.']].map(([n,d,p,h,t])=>`<div class="card"><div class="row between"><div class="b">${n}</div><span class="tag" style="background:var(--ml);color:var(--m)">${d}</span></div><div class="mu" style="margin:4px 0">${p} · ${h}</div><div class="lc">${t}</div></div>`).join('')}<button class="btn gh" onclick="toast('Surgery added')">${I.plus} Add Surgery</button>`,
+()=>`<div class="h3">Notes</div><div class="mu">From your last visit · Aug 02, 2026</div><div class="card lc" style="margin-top:12px"><div class="b" style="color:var(--tx);margin-bottom:4px">Initial Complaints</div>Patient reports intermittent morning headaches and mild fatigue over the past three weeks. Home blood pressure readings averaging 134/86. Reports occasional knee stiffness after long walks.
+<div class="b" style="color:var(--tx);margin:12px 0 4px">Diagnosis</div>Stage 1 hypertension, partially controlled. Type 2 diabetes well managed (A1C 6.6%). Mild osteoarthritis, right knee.
+<div class="b" style="color:var(--tx);margin:12px 0 4px">Care Plan</div><ol><li>Continue Lisinopril 10 mg daily; recheck BP in 4 weeks.</li><li>Continue Metformin 500 mg twice daily with meals.</li><li>Reduce sodium intake to under 2,000 mg/day.</li><li>Low-impact exercise (swimming, cycling) 30 min, 5×/week.</li></ol></div>
+<label class="f">Add your own note for the doctor</label><textarea class="in" placeholder="Type a note…">Ask about switching BP med to evening dose.</textarea>`,
+()=>`<div class="h3">Devices</div><div class="mu">Connected health devices sync vitals automatically</div><div class="card" style="margin-top:12px">${[['⌚','Apple Watch Series 9','Heart rate, steps, sleep',1],['🩺','Omron BP Monitor','Blood pressure',1],['🩸','Accu-Chek Guide','Blood glucose',1],['⚖️','Withings Body+ Scale','Weight, BMI',0],['😴','Oura Ring','Sleep, temperature',0]].map(([e,n,d,o])=>`<div class="tgrow"><div class="timg" style="background:var(--ml);width:42px;height:42px;font-size:20px">${e}</div><div style="flex:1"><b class="sm">${n}</b><div class="mu">${d}</div></div><label class="tg"><input type="checkbox" ${o?'checked':''}><span></span></label></div>`).join('')}</div>
+<div class="card"><div class="b" style="margin-bottom:6px">Key Physical Health Indicators</div>${[['Weight','182 lbs'],['Blood Pressure','128/82'],['Blood Sugar','118 mg/dL'],['Steps Taken','6,420'],['EKG Data','Normal sinus rhythm'],['Pulse','72 bpm'],['Temperature','98.6 °F']].map(([k,v])=>`<div class="kv"><span class="mu">${k}</span><b>${v}</b></div>`).join('')}</div>`,
+()=>`<div class="h3">Routine</div><div class="mu">Your typical day</div><div class="grid2" style="margin-top:12px">${[['😴','Sleep','7h 10m'],['💧','Water','6 / 8 cups'],['🏃','Exercise','35 min'],['🥗','Meals','3 / day']].map(([e,l,v])=>`<div class="kpi" style="min-height:96px"><div style="font-size:24px">${e}</div><div class="mu">${l}</div><div class="v">${v}</div></div>`).join('')}</div>
+${sel('Typical wake-up time',['5:00 AM','6:00 AM','6:30 AM','7:00 AM','8:00 AM'],'6:30 AM')}${sel('Typical bedtime',['9:00 PM','10:00 PM','10:30 PM','11:00 PM','12:00 AM'],'10:30 PM')}${sel('Smoking',['Never','Former','Current'],'Never')}${sel('Alcohol',['None','Occasionally','Weekly','Daily'],'Occasionally')}
+<div class="card" style="margin-top:14px"><div class="b">Sleep this week (hrs)</div>${bars([6.8,7.2,6.5,7.5,6.9,8.1,7.6],['M','T','W','T','F','S','S'],70,M,5)}</div>`,
+()=>`<div class="h3">Mental Health</div><div class="mu">How have you been feeling?</div><div class="card" style="margin-top:12px;text-align:center">${pie([['Happy',32,'#DC143C'],['Calm',22,'#F25270'],['Anxious',14,'#9E9EA6'],['Stressed',12,'#6B6B73'],['Tired',12,'#C7C7CC'],['Sad',8,'#3E3E45']],210)}</div>
+<div class="card"><div class="b" style="margin-bottom:10px">How do you feel this week</div>${moodChart()}</div>
+${sel('Over the last 2 weeks, how often have you felt down or hopeless?',['Not at all','Several days','More than half the days','Nearly every day'],'Several days')}${sel('Are you currently seeing a therapist?',['No','Yes','Interested'],'Interested')}`,
+()=>`<div class="h3">Concerns</div><div class="mu">Help us understand what matters to you</div><div style="height:6px"></div>${[['Do you have difficulty affording your medications?','No'],['Do you feel safe at home?','Yes'],['Do you have reliable transportation to appointments?','Yes'],['Would you like help finding a specialist?','Yes'],['Have you had a fall in the past 12 months?','No']].map(([q,a],i)=>`<div class="card"><div class="sm b">${q}</div><div class="radio" style="margin-top:10px"><label><input type="radio" name="cq${i}" ${a==='Yes'?'checked':''}> Yes</label><label><input type="radio" name="cq${i}" ${a==='No'?'checked':''}> No</label></div></div>`).join('')}<label class="f">Biggest health concern right now</label><textarea class="in">Keeping my blood pressure under control.</textarea>`,
+()=>`<div class="h3">Others</div><div class="mu">Final details</div><div style="height:6px"></div>${[['Do you have an Advance Directive?','Yes'],['Are you an organ donor?','Yes'],['Do you need a translator at visits?','No'],['Do you use any assistive devices?','No']].map(([q,a],i)=>`<div class="card"><div class="sm b">${q}</div><div class="radio" style="margin-top:10px"><label><input type="radio" name="oq${i}" ${a==='Yes'?'checked':''}> Yes</label><label><input type="radio" name="oq${i}" ${a==='No'?'checked':''}> No</label></div></div>`).join('')}${sel('Blood Type',['A+','A-','B+','B-','AB+','AB-','O+','O-'],'O+')}<label class="f">Anything else your care team should know?</label><textarea class="in" placeholder="Optional"></textarea>`
 ];
-
-function containsBannedLanguage(text) {
-  const lower = text.toLowerCase();
-  return bannedWords.some(word => lower.includes(word));
-}
-
-function sendChat() {
-  if (chatBanned) {
-    alert('Your account is under review. You can still use PHR and Education, but posting in Community is paused until review is complete.');
-    return;
-  }
-  const msg = document.getElementById('chatMsg').value.trim();
-  if (!msg) return;
-
-  if (containsBannedLanguage(msg)) {
-    chatWarnings++;
-    chatBanned = true;
-    metrics.warnings = (metrics.warnings || 0) + 1;
-    saveMetrics();
-    document.getElementById('chatMsg').value = '';
-    alert('Warning: Your message contained vulgar or threatening language. Your account will need to be reviewed before you can post in the Community again. You still have full access to PHR and Education.');
-    track('chat_moderation_warning', msg);
-    return;
-  }
-
-  metrics.chats++;
-  saveMetrics();
-  alert('Message sent (simulated). In real app this would post to community.');
-  document.getElementById('chatMsg').value = '';
-  track('chat', currentRole);
-}
-
-function addStory() {
-  alert('Story shared with community (simulated).');
-  track('story', currentRole);
-}
-
-function curateContent() {
-  const diag = document.getElementById('diagnosis')?.value || phrData.diagnosis || 'general health';
-  const content = document.getElementById('eduContent');
-  content.innerHTML = `
-    <div class="card">
-      <strong>AI-Curated for: ${diag}</strong>
-      <div class="metric">Based on your diagnosis</div>
-      <div style="margin-top:10px;">
-        <div class="card">Article: Latest research on ${diag}</div>
-        <div class="card">Live Forum: Weekly support group for ${diag}</div>
-        <div class="card">Video: Managing daily life with ${diag}</div>
-        <button class="share-btn" onclick="shareItem('Education content for ${diag}')">Share</button>
-      </div>
-    </div>
-  `;
-  metrics.eduViews++;
-  saveMetrics();
-  track('edu_view', diag);
-}
-
-function bookAppt() {
-  const translator = document.getElementById('needTranslator').checked;
-  document.getElementById('apptStatus').innerHTML = `
-    <div style="margin-top:10px; color:green;">Appointment booked${translator ? ' with translator' : ''}.</div>
-  `;
-  metrics.appointments++;
-  saveMetrics();
-  track('appointment', currentRole);
-}
-
-function shareItem(what) {
-  metrics.shares++;
-  saveMetrics();
-  alert(`Shared "${what}" off-platform (simulated link generated).`);
-  track('share', what);
-}
-
-function refreshMetrics() {
-  document.getElementById('metricsContent').innerHTML = `
-    <div><strong>Logins:</strong> ${metrics.logins}</div>
-    <div><strong>PHR Saves:</strong> ${metrics.phrSaves}</div>
-    <div><strong>Shares:</strong> ${metrics.shares}</div>
-    <div><strong>Chat Messages:</strong> ${metrics.chats}</div>
-    <div><strong>Moderation Warnings:</strong> ${metrics.warnings || 0}</div>
-    <div><strong>Education Views:</strong> ${metrics.eduViews}</div>
-    <div><strong>Appointments:</strong> ${metrics.appointments}</div>
-    <div class="metric" style="margin-top:12px;">All metrics stored locally. In production this would feed a backend analytics dashboard.</div>
-  `;
-}
-
-function saveMetrics() {
-  localStorage.setItem('metrics', JSON.stringify(metrics));
-}
-
-function track(event, detail) {
-  console.log(`[METRIC] ${event} | role: ${currentRole} | detail: ${detail}`);
-}
-
-refreshMetrics();
-</script>
-</body>
-</html>
+function moodChart(){const d=[['Mon',4],['Tue',3],['Wed',5],['Thu',2],['Fri',4],['Sat',5],['Sun',4]],em=['','😢','😟','😐','🙂','😄'];return `<div style="display:flex;gap:6px;align-items:flex-end;height:150px">${d.map(([l,v])=>`<div style="flex:1;text-align:center"><div style="font-size:18px">${em[v]}</div><div style="height:${v*20}px;background:linear-gradient(${M},#F25270);border-radius:6px 6px 2px 2px;margin-top:4px"></div><div class="xs mu" style="margin-top:4px">${l}</div></div>`).join('')}</div>`}
+R.wallet=()=>`${tb('myHealth Wallet',{logo:1})}<div class="stepper" id="stp">${STEPS.map((s,i)=>`<div class="st ${i===S.step?'on':S.done.has(i)?'done':''}" onclick="S.step=${i};render('wallet')"><i>${S.done.has(i)&&i!==S.step?I.check:i+1}</i><span>${s}</span></div>`).join('')}</div>
+<div class="scroll" id="wsc">${W[S.step]()}</div><div class="wfoot">${S.step>0?`<button class="btn ol" style="width:40%" onclick="S.step--;render('wallet')">Back</button>`:''}<button class="btn" onclick="wNext()">${S.step===STEPS.length-1?'Submit':'Next'}</button></div>${nav('phr')}`;
+function wNext(){S.done.add(S.step);if(S.step===STEPS.length-1){go('walletdone');return}S.step++;render('wallet')}
+R.phr=()=>{const n=S.done.size;return `${tb('PHR Dashboard',{logo:1})}<div class="scroll"><div class="card"><div class="row between"><b class="sm">Personal Health Record Status</b><b style="color:var(--m)">${n}/13</b></div><div class="bar" style="margin-top:10px"><i style="width:${n/13*100}%"></i></div><div class="mu" style="margin-top:8px">${n===13?'Your wallet is complete 🎉':`Complete ${13-n} more section${13-n>1?'s':''} to finish your wallet`}</div></div>
+<div class="card phrlist" style="padding:4px 14px">${STEPS.map((s,i)=>`<div class="phrrow ${S.done.has(i)?'done':''}" onclick="S.step=${i};go('wallet')"><div class="dot">${S.done.has(i)?I.check:''}</div><div class="nm">${s==='Physical Health'?'Key Physical Health Indicators':s}</div><span class="chev">${I.chev}</span></div>`).join('')}</div>
+<button class="btn" onclick="S.step=[...Array(13).keys()].find(i=>!S.done.has(i))??0;go('wallet')">${n===13?'Review Wallet':'Continue Wallet Setup'}</button></div>${nav('phr')}`};
+R.walletdone=()=>`${tb('myHealth Wallet',{logo:1})}<div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px"><div style="width:110px;height:110px;border-radius:50%;background:${M};display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 14px ${ML}">${sv('<path d="M20 6L9 17l-5-5"/>',56,3).replace('currentColor','#fff')}</div>
+<div class="h3" style="margin-top:34px;font-size:19px">Your Health Wallet is Now Full</div><div class="mu" style="margin:8px 0 34px;font-size:13px">All 13 sections are saved and ready to share with your care team.</div>
+<div class="card" style="width:100%"><div class="b sm">Do You Want to Share Your Data with a Caregiver?</div><button class="btn ol sm" style="margin:14px auto 0;width:140px" onclick="openSheet('share')">Share</button></div>
+<button class="btn" style="margin-top:20px" onclick="S.stack=[];go('home')">Back to Dashboard</button></div>${nav('phr')}`;
+/* ---------- home ---------- */
+const HW=[['steps','Daily Steps'],['activity','Daily Activity'],['perf','Performance Note'],['notes',"Notes for doctor's visit"],['rem','Reminder'],['meds',"Did I take my Meds ?"],['sick','Sick days'],['weight','Body Weight & Mood'],['sugar','Sugar Level History'],['dirs','Directories']];
+HW.forEach(([k])=>S.hw[k]=true);
+const HWR={
+steps:()=>`<div class="card row" style="gap:18px">${ring(.6,112,12,M,'<div style="font-size:22px">👟</div><b style="font-size:20px">1,200</b><div class="xs mu">of 2,000</div>')}<div style="flex:1"><div class="b">Daily Steps</div><div class="mu" style="margin:4px 0 10px">You're 60% to your goal</div><div class="kv"><span class="mu">Distance</span><b>0.6 mi</b></div><div class="kv"><span class="mu">Calories</span><b>84 kcal</b></div></div></div>`,
+activity:()=>`<div class="card"><div class="row between"><div class="b">Daily Activity</div><span class="mu">Today</span></div><div class="row" style="justify-content:space-around;margin-top:12px">${[['Walk',.72,M,'🚶','22 min'],['Swim',.45,'#4A90E2','🏊','15 min'],['Run',.3,'#F5A623','🏃','8 min']].map(([l,p,c,e,v])=>`<div style="text-align:center">${ring(p,78,8,c,`<div style="font-size:22px">${e}</div>`)}<div class="b sm" style="margin-top:6px">${l}</div><div class="xs mu">${v}</div></div>`).join('')}</div></div>`,
+perf:()=>`<div class="banner good"><div style="font-size:28px">🏆</div><div><b>Good Performance, Today!</b><div class="xs" style="opacity:.9">You hit 3 of 4 health goals. Keep it up, Jonathan.</div></div></div>`,
+notes:()=>`<div class="card"><div class="row between"><div class="b">Notes for doctor's visit</div><span style="color:var(--m)">${I.pen}</span></div><div class="row" style="margin-top:12px">${av('Dr. Allison Kim','',2)}<div style="flex:1"><b class="sm">Dr. Allison Kim</b><div class="mu">Primary Care</div></div><button class="btn sm" onclick="S.step=7;go('wallet')">View Notes</button></div><div class="mu row" style="margin-top:10px;gap:6px">${I.cal} Friday, Nov 6 at 10:30 AM</div></div>`,
+rem:()=>`<div class="card"><div class="row between"><div class="b">Reminder</div><span style="color:var(--m)">${I.bell}</span></div>${[['Please take Medication',1],['How are you feeling today? We really want to know.',0],['Drink 8 glasses of water',0],['Check blood pressure at 6 PM',0]].map(([t,o])=>`<div class="check ${o?'on':''}" onclick="this.classList.toggle('on')"><div class="cb">${I.check.replace('currentColor','#fff')}</div><span class="lbl">${t}</span></div>`).join('')}</div>`,
+meds:()=>`<div class="sec">Did I take my Meds ? <span class="link" onclick="S.step=4;go('wallet')">View all</span></div><div class="hs">${[['Lisinopril','10mg · 8:00 AM',1,'#DC143C'],['Metformin','500mg · 12:30 PM',0,'#4A90E2'],['Vitamin D3','2000 IU · 12:30 PM',0,'#F5A623'],['Atorvastatin','20mg · 9:00 PM',0,'#7B61FF']].map(([n,d,t,c])=>`<div class="medc"><div class="pillimg" style="width:40px;height:40px">${pillsvg(c)}</div><b class="sm" style="display:block;margin-top:8px">${n}</b><div class="xs mu">${d}</div>${t?'<div class="tag st-Completed" style="margin-top:8px">✓ Taken</div>':`<button class="btn sm" style="margin-top:8px;height:28px;font-size:12px" onclick="this.outerHTML='<div class=\\'tag st-Completed\\' style=\\'margin-top:8px\\'>✓ Taken</div>';toast('${n} marked as taken')">Take now</button>`}</div>`).join('')}</div>`,
+sick:()=>`<div class="card"><div class="row between"><div class="b">Sick days</div><span class="mu">2026</span></div><div class="bar" style="height:12px;margin:12px 0 8px"><i style="width:28%"></i></div><div class="row between xs"><span><b style="color:var(--m)">●</b> Taken 4 days</span><span class="mu">● Available 10 days</span></div></div>`,
+weight:()=>`<div class="sec">Your Recent Body Weight</div><div class="grid2"><div class="kpi" style="text-align:center"><div class="t" style="justify-content:center">BMI</div>${ring(.62,90,10,M,'<b>24.9</b><div class="xs mu">Normal</div>')}</div><div class="kpi"><div class="t">Weight</div><div class="v">182 <span class="mu">lbs</span></div>${line([188,186,185,184,183,182],140,56)}<div class="xs" style="color:var(--g)">▼ 6 lbs this month</div></div></div>
+<div class="card" style="margin-top:12px"><div class="b" style="margin-bottom:6px">Mood this week</div>${moodChart()}</div>`,
+sugar:()=>`<div class="card"><div class="row between"><div class="b">Sugar Level History</div><span class="tag" style="background:var(--ml);color:var(--m)">mg/dL</span></div><div class="row" style="gap:16px;margin:8px 0"><div><div class="xs mu">Fasting avg</div><b>112</b></div><div><div class="xs mu">Post-meal avg</div><b>141</b></div><div><div class="xs mu">A1C</div><b>6.6%</b></div></div>${line([108,122,115,146,131,119,138,112,126],320,80,M)}<div class="row between xs mu"><span>Oct 21</span><span>Oct 29</span></div></div>
+<div class="banner warn"><div style="font-size:24px">⚠️</div><div><b class="sm">Post-meal sugar needs work</b><div class="xs">3 readings above 140 this week. Try a 10-minute walk after dinner.</div></div></div>`,
+dirs:()=>`<div class="sec">Directories</div><div class="card"><div class="b sm" style="margin-bottom:6px">Key Contacts</div>${[['Dr. Allison Kim','(312) 555-0101',2],['Dr. Noel Haque','(312) 555-0144',3],['Walgreens Pharmacy','(773) 555-0122',4]].map(([n,p,i])=>`<div class="tgrow">${av(n,'sm',i)}<div style="flex:1"><b class="sm">${n}</b><div class="mu">${p}</div></div><button class="iconbtn" style="color:var(--m)" onclick="toast('Calling ${n}…')">${I.phone}</button></div>`).join('')}</div>
+<div class="card"><div class="b sm" style="margin-bottom:6px">Family Phone Numbers</div>${[['Sarah Davis','(312) 555-0199',1],['Emma Davis','(312) 555-0123',5],['Robert Davis','(708) 555-0187',6]].map(([n,p,i])=>`<div class="tgrow">${av(n,'sm',i)}<div style="flex:1"><b class="sm">${n}</b><div class="mu">${p}</div></div><button class="iconbtn" style="color:var(--m)" onclick="toast('Calling ${n}…')">${I.phone}</button></div>`).join('')}</div>
+<div class="card"><div class="b sm" style="margin-bottom:6px">Emergency Hospitals</div>${[['Northwestern Memorial Hospital','1.2 mi · ER wait ~18 min'],['Rush University Medical Center','3.4 mi · ER wait ~25 min'],['Lurie Children’s Hospital','1.4 mi · Pediatric ER']].map(([n,d])=>`<div class="tgrow"><div class="timg" style="background:var(--ml);width:36px;height:36px;font-size:18px">🏥</div><div style="flex:1"><b class="sm">${n}</b><div class="mu">${d}</div></div><span class="chev">${I.chev}</span></div>`).join('')}</div>`
+};
+R.home=()=>`${tb('Home',{noback:1,right:`<div class="row" style="gap:4px"><button class="iconbtn" style="color:var(--m)" onclick="openSheet('edit')">${I.pen}</button>${me()}</div>`})}<div class="scroll"><div style="margin:4px 0 12px"><div class="mu">Thursday, October 29</div><div class="h2">Good morning, Jonathan 👋</div></div>${HW.filter(([k])=>S.hw[k]).map(([k])=>HWR[k]()).join('')}</div>${nav('home')}`;
+/* ---------- sheets ---------- */
+const SHEETS={
+edit:()=>`<div class="grab"></div><div class="hd"><button class="iconbtn" onclick="closeSheet()">${I.back}</button><b>Customize Home</b><button class="btn blue sm" onclick="saveEdit()">Save</button></div><div class="bd">${HW.map(([k,l])=>`<div class="tgrow"><span class="h">${I.drag}</span><span style="flex:1">${l}</span><label class="tg"><input type="checkbox" data-k="${k}" ${S.hw[k]?'checked':''}><span></span></label></div>`).join('')}</div>`,
+share:()=>`<div class="grab"></div><div class="hd"><b>Share</b><button class="iconbtn" onclick="closeSheet()">${I.x}</button></div><div class="bd"><div class="row" style="gap:16px;overflow-x:auto;padding:12px 0">${[['Sarah Davis',1],['Emma Davis',5],['Dr. Allison Kim',2],['Robert Davis',6],['Mike Torres',3]].map(([n,i])=>`<div style="text-align:center;width:64px;flex-shrink:0;cursor:pointer" onclick="closeSheet();toast('Shared with ${n}')">${av(n,'lg',i).replace('class="av lg"','class="av lg" style="margin:0 auto 6px;background:linear-gradient(135deg,'+AVC[i]+')"')}<div class="xs">${n.split(' ')[0]==='Dr.'?'Dr. Kim':n.split(' ')[0]}</div></div>`).join('')}</div>
+<div class="row" style="gap:18px;padding:10px 0 14px;border-top:1px solid var(--ln)">${[['💬','Messages'],['✉️','Mail'],['🟢','WhatsApp'],['📘','Facebook'],['🔗','Copy Link']].map(([e,l])=>`<div style="text-align:center;width:56px;cursor:pointer" onclick="closeSheet();toast('${l==='Copy Link'?'Link copied':'Shared via '+l}')"><div style="width:52px;height:52px;border-radius:14px;background:#f1f1f4;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 4px">${e}</div><div class="xs">${l}</div></div>`).join('')}</div>
+${['Copy','Add to Reading List','Save to Files','Print'].map(l=>`<div class="tgrow" style="cursor:pointer" onclick="closeSheet();toast('${l} (demo)')">${l}</div>`).join('')}</div>`
+};
+function openSheet(k){$('#sheet').innerHTML=SHEETS[k]();$('#modal').classList.add('on')}
+function closeSheet(){$('#modal').classList.remove('on')}
+function saveEdit(){$$('#sheet [data-k]').forEach(c=>S.hw[c.dataset.k]=c.checked);closeSheet();render('home');toast('Home dashboard updated')}
+/* ---------- community ---------- */
+const TOPICS=[['CHF','🫀','#F8D7DD'],['Diabetes','🩸','#FDE4C8'],['Depression','🌧️','#DDE3F0'],['Flu','🤧','#D9F0E3'],['AFib','💓','#FBD3E0'],['Arthritis','🦴','#EDE3D6'],['Asthma','🫁','#D6ECF5'],['Cancer','🎗️','#F3DDF0'],['Gout','🦶','#E8E4F7'],['Hepatitis','🧪','#F5F1D0']];
+const PILLS=['AFib','Gout','Fibroids','Hepatitis','CHF','Diabetes','Depression','Flu','Fibroids','Hepatitis','Lyme'];
+R.community=()=>`${tb('myHealth Community',{logo:1})}<div class="scroll"><div class="srch"><input class="in" placeholder="Search and select disease state" oninput="filterTopics(this.value)">${I.search}</div>
+<div class="sec">Related Topics</div><div>${[...new Set(PILLS)].map(p=>`<span class="pill" onclick="openTopic('${TOPICS.find(t=>t[0]===p)?p:'Arthritis'}')">${p}</span>`).join('')}</div>
+<div class="sec">All Communities <span class="link" onclick="go('chatlist')">Find People</span></div><div id="tlist">${TOPICS.map(([n,e,c])=>`<div class="topic" data-n="${n.toLowerCase()}" onclick="openTopic('${n}')"><div class="timg" style="background:${c}">${e}</div><div style="flex:1"><b>${n}</b><div class="mu">${(n.length*137)%900+120} members · ${(n.length*7)%30+4} new posts</div></div><span class="chev" style="color:var(--m)">${I.chev}</span></div>`).join('')}</div>
+<button class="btn" style="margin-top:10px" onclick="openTopic('Arthritis')">Go to myHealth Community</button></div>${nav('community')}`;
+function filterTopics(v){$$('#tlist .topic').forEach(t=>t.style.display=t.dataset.n.includes(v.toLowerCase())?'':'none')}
+function openTopic(n){S.topic=n;go('topic')}
+const POSTS=[['Williams Thomas','There\'s likely no arthritis diagnosis I\'ve heard of more often after 40. Here are some things you can expect.','Arthritis is a common condition that causes pain and inflammation in a joint. Low-impact movement, weight management and the right medication plan made a huge difference for me.',24,8],['Daniel Joe','What are the causes and types of arthritis? How do I know which one I have?','There are more than 100 types. Osteoarthritis and rheumatoid arthritis are the most common — ask your doctor about an X-ray and a simple blood panel to tell them apart.',41,15],['David Samuel','Paraffin wax baths are suitable for people with arthritis in the hands or feet, and helping ease pain and stiffness.','I use one every evening for 15 minutes. My grip strength is noticeably better in the morning.',18,6],['James Cameron','Has anyone tried physical therapy before considering knee surgery?','My orthopedist suggested 8 weeks of PT first and I\'m at week 5 — already walking further with less pain.',12,9]];
+R.topic=()=>{const t=TOPICS.find(x=>x[0]===S.topic)||TOPICS[5];return `${tb(t[0])}<div class="scroll"><div class="hero" style="background:linear-gradient(135deg,${M},#5a0a1c)"><span class="emo">${t[1]}</span><div style="position:relative">${t[0]}<div class="xs" style="font-weight:500;opacity:.9">${(t[0].length*137)%900+120} members · Moderated by health professionals</div></div></div>
+<div class="row" style="margin-bottom:14px"><button class="btn sm" style="flex:1" onclick="toast('Showing member stories')">📖 Stories</button><button class="btn ol sm" style="flex:1" onclick="go('chatlist')">${I.cmt} Chat</button></div>
+<div class="card row" style="padding:10px">${me()}<input class="in" style="height:38px;border-radius:20px" placeholder="Share your story or ask a question…" onkeydown="if(event.key==='Enter'&&this.value){toast('Posted to ${t[0]} community');this.value=''}"></div>
+${POSTS.map(([a,q,p,l,c],i)=>`<div class="card post"><div class="ph">${av(a,'',i+1)}<div style="flex:1"><b class="sm">${a}</b><div class="xs mu">${['10/29/2026','10/28/2026','10/27/2026','10/25/2026'][i]} · ${['9:12am','4:40pm','12:06pm','8:30am'][i]}</div></div><button class="iconbtn" style="color:var(--m)" onclick="openSheet('share')">${I.share}</button></div><div class="q">${q}</div><p>${p}</p><div class="acts"><span onclick="this.classList.toggle('on');const b=this.querySelector('b');b.textContent=+b.textContent+(this.classList.contains('on')?1:-1)">${I.heart}<b>${l}</b></span><span>${I.cmt} ${c} replies</span><span onclick="openSheet('share')">${I.share} Share</span></div></div>`).join('')}</div>${nav('community')}`};
+const PEOPLE=[['Williams Thomas','Wisconsin, USA'],['Henry M','Wisconsin, USA'],['David Samuel','Illinois, USA'],['Daniel Joe','Ohio, USA'],['James Cameron','Texas, USA'],['Andria Long','Florida, USA']];
+R.chatlist=()=>`${tb('myHealth Community',{logo:1})}<div class="scroll"><div class="srch" style="margin-bottom:14px"><input class="in" placeholder="Search People">${I.search}</div><div class="pgrid">${PEOPLE.map(([n,l],i)=>`<div class="prof">${av(n,'lg',i+1).replace('class="av lg"','class="av lg" style="margin:0 auto 8px;background:linear-gradient(135deg,'+AVC[(i+1)%8]+')"')}<b class="sm">${n}</b><div class="xs mu" style="margin:2px 0 10px">${l}</div><button class="btn sm" style="margin:0 auto" onclick="S.thread=${i};go('chat')">${I.cmt} Chat</button></div>`).join('')}</div></div>${nav('community')}`;
+const SEED=[['r','Hi Jonathan! Saw your post in the Arthritis group 👋','9:02'],['s','Hey! Thanks for reaching out. How has PT been going for you?','9:04'],['r','Honestly really well. Week 5 and my knee feels so much better.','9:05'],['r','Did your doctor recommend any specific exercises?','9:05'],['s','Mostly cycling and swimming. Low impact stuff.','9:07']];
+R.chat=()=>{const p=PEOPLE[S.thread||0];const m=S.chats[S.thread]||(S.chats[S.thread]=SEED.slice());return `${sbar()}<div class="topbar"><button class="iconbtn" onclick="back()">${I.back}</button>${av(p[0],'',(S.thread||0)+1)}<div style="flex:1"><b class="sm">${p[0]}</b><div class="xs" style="color:var(--g)">● Online</div></div><button class="iconbtn" style="color:var(--m)" onclick="toast('Starting video call…')">${I.video}</button><button class="iconbtn" style="color:var(--m)" onclick="toast('Calling…')">${I.phone}</button></div>
+<div class="msgs" id="msgs"><div class="xs mu" style="text-align:center">Today</div>${m.map(([w,t,h])=>`<div class="msg ${w}">${t}<small>${h} AM</small></div>`).join('')}</div>
+<div class="composer"><input class="in" id="cin" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()"><button class="send" onclick="sendMsg()">${I.send}</button></div>`};
+function sendMsg(){const v=$('#cin').value.trim();if(!v)return;const m=S.chats[S.thread];m.push(['s',v.replace(/</g,'&lt;'),'9:4'+(m.length%10)]);render('chat');setTimeout(()=>{m.push(['r',['That makes sense! 😊','Thanks for sharing — let\'s keep each other posted.','Great idea, I\'ll try that too.'][m.length%3],'9:4'+(m.length%10)]);if(cur==='chat')render('chat')},1200)}
+/* ---------- university ---------- */
+const TH=[['linear-gradient(135deg,#4A90E2,#1c3f6e)','🧬'],['linear-gradient(135deg,#DC143C,#5a0a1c)','🫀'],['linear-gradient(135deg,#2EAD6B,#0f5132)','🥗'],['linear-gradient(135deg,#7B61FF,#2d1f7a)','🧠'],['linear-gradient(135deg,#F5A623,#9a5b00)','🏃'],['linear-gradient(135deg,#20B2AA,#0b4f4c)','💊']];
+const thumb=(i,h,extra='')=>`<div class="thumb" style="background:${TH[i%6][0]};height:${h}px"><span class="emo">${TH[i%6][1]}</span>${extra}</div>`;
+R.university=()=>{const t=S.uni;let b='';
+if(t==='Articles')b=`<div class="srch"><input class="in" placeholder="Search for Articles">${I.search}</div><div class="sec">Trending <span class="link">See all</span></div><div class="hs">${[['Exercise medicine has revolutionised cancer care over the past decade.','Health News'],['Understanding your A1C: what the numbers really mean','Diabetes'],['5 heart-healthy habits cardiologists swear by','Heart']].map(([h,c],i)=>`<div class="card" style="width:250px;padding:0;overflow:hidden;margin:0" onclick="toast('Opening article…')">${thumb(i,130)}<div style="padding:12px"><span class="tag" style="background:var(--ml);color:var(--m)">${c}</span><div class="b sm" style="margin-top:6px">${h}</div><div class="acts" style="margin-top:8px"><span>${I.heart} ${12+i*7}</span><span>${I.cmt} ${3+i}</span><span>🕑 ${4+i} min</span></div></div></div>`).join('')}</div>
+<div class="sec">Recommendations</div>${[['Daniel Joe','Edith Cowan University researchers have developed a new assessment tool that can predict Huntington\'s disease'],['Dr. Allison Kim','Lowering sodium: small swaps that make a big difference for blood pressure'],['Mental Health Today','Why a 10-minute walk after meals can lower blood sugar'],['Dr. Noel Haque','Joint pain in winter: myth or science?'],['CDC Health','Flu season 2026: who should get vaccinated and when']].map(([a,h],i)=>`<div class="art" onclick="toast('Opening article…')"><div class="thumb" style="background:${TH[(i+2)%6][0]};width:92px;height:76px"><span class="emo" style="font-size:34px">${TH[(i+2)%6][1]}</span></div><div style="flex:1"><div class="xs mu">${a} · 10/2${9-i}/2026</div><div class="b sm" style="margin-top:3px">${h}</div><div class="acts" style="margin-top:6px"><span>${I.heart} ${30-i*4}</span><span>${I.share}</span></div></div></div>`).join('')}`;
+if(t==='Video')b=`<div class="srch"><input class="in" placeholder="Search for Video">${I.search}</div><div class="sec">Recommendations</div>${[['Type 2 diabetes: Symptoms, causes and its treatments','12:40'],['How your heart works — an animated guide','8:15'],['Gentle yoga for arthritis relief','22:03'],['Mindfulness in 5 minutes a day','5:10'],['Reading a nutrition label like a dietitian','9:47']].map(([h,d],i)=>`<div class="card" style="padding:0;overflow:hidden" onclick="toast('Playing: ${h.replace(/'/g,'')}')">${thumb(i+1,180,`<div class="play">${I.play}</div><div class="dur">${d}</div>`)}<div style="padding:12px"><div class="b sm">${h}</div><div class="acts"><span>👁 ${(i+2)*1.3|0}.${i}k views</span><span>${I.heart} ${40+i*9}</span><span>${I.share}</span></div></div></div>`).join('')}`;
+if(t==='Live')b=`<div class="sec">Live Now</div>${[['Ask a Cardiologist: Managing High Blood Pressure','Dr. Allison Kim','312 watching'],['Diabetes Kitchen: Low-carb dinners','Chef Maria Lopez, RD','128 watching']].map(([h,a,w],i)=>`<div class="card" style="padding:0;overflow:hidden">${thumb(i+1,160,`<div class="live"><i></i>LIVE</div><div class="dur">👁 ${w}</div>`)}<div style="padding:12px" class="row between"><div><div class="b sm">${h}</div><div class="mu">${a}</div></div><button class="btn sm" onclick="toast('Joining live session…')">Join</button></div></div>`).join('')}
+<div class="sec">Upcoming</div>${[['Sleep & Your Heart','Nov 3, 2026 · 6:00 PM CT','Dr. Noel Haque'],['Caregiver Q&A: Avoiding Burnout','Nov 7, 2026 · 12:00 PM CT','Lisa Grant, LCSW'],['Arthritis: New Treatments in 2026','Nov 12, 2026 · 7:00 PM CT','Dr. Marcus Lee']].map(([h,d,a],i)=>`<div class="card row"><div class="thumb" style="background:${TH[i+3][0]};width:64px;height:64px;flex-shrink:0"><span class="emo" style="font-size:28px">${TH[i+3][1]}</span></div><div style="flex:1"><div class="b sm">${h}</div><div class="xs mu">${a}</div><div class="xs" style="color:var(--m);margin-top:2px">${d}</div></div><button class="btn ol sm" onclick="this.textContent='Registered ✓';this.className='btn gh sm';toast('You are registered!')">Register</button></div>`).join('')}`;
+return `${tb('myHealth University',{logo:1})}<div class="tabs">${['Articles','Video','Live'].map(x=>`<button class="${x===t?'on':''}" onclick="S.uni='${x}';render('university')">${x}</button>`).join('')}</div><div class="scroll">${b}</div>${nav('university')}`};
+/* ---------- telehealth ---------- */
+const DOCS=[['Dr. Allison Kim','Primary Care · Internal Medicine','Northwestern Medicine',4.9,'$15',12],['Dr. Noel Haque','Primary Care · Endocrinology','Rush Medical Group',4.8,'$20',9],['Dr. Priya Shah','Primary Care · Family Medicine','Advocate Health',4.7,'$15',15],['Dr. Marcus Lee','Primary Care · Sports Medicine','UChicago Medicine',4.8,'$25',11]];
+const MDOCS=[['Dr. Lisa Grant','Mental Health · LCSW Therapist','Thriveworks Chicago',4.9,'$10',8],['Dr. Omar Reyes','Mental Health · Psychiatry','Northwestern Medicine',4.8,'$30',14],['Dr. Hannah Cole','Mental Health · Psychology','Lakeview Counseling',4.7,'$20',10]];
+let APPTS=[['Dr. Allison Kim','Primary Care','Nov 6, 2026','10:30 AM','Upcoming','Video'],['Dr. Lisa Grant','Mental Health','Nov 10, 2026','4:00 PM','Upcoming','Video'],['Dr. Noel Haque','Primary Care','Oct 20, 2026','9:00 AM','Completed','Video'],['Dr. Allison Kim','Primary Care','Sep 28, 2026','11:15 AM','Completed','Audio'],['Dr. Omar Reyes','Mental Health','Sep 14, 2026','2:30 PM','Missed','Video'],['Dr. Marcus Lee','Primary Care','Aug 30, 2026','1:00 PM','Cancelled','Video']];
+const SC={Completed:'#22A45D',Missed:'#DC143C',Cancelled:'#9E9EA6',Upcoming:'#E91E63'};
+const cnt=s=>({Completed:25,Missed:4,Cancelled:1,Upcoming:0}[s]+APPTS.filter(a=>a[4]===s&&s==='Upcoming').length);
+R.telehealth=()=>`${tb('TeleHealth',{logo:1})}<div class="scroll"><div class="b" style="text-align:center;margin:4px 0 12px">Search Physician based on Speciality</div><div class="grid2"><div class="spec" style="background:linear-gradient(160deg,#4A90E2,#173d6b)" onclick="S.spec='p';go('doctors')"><span class="emo">👩‍⚕️</span><span style="position:relative">Primary Care</span></div><div class="spec" style="background:linear-gradient(160deg,${M},#5a0a1c)" onclick="S.spec='m';go('doctors')"><span class="emo">🧠</span><span style="position:relative">Mental Health</span></div></div>
+<div class="b" style="text-align:center;margin:20px 0 12px">Appointments</div><div class="grid2">${['Completed','Missed','Cancelled','Upcoming'].map(s=>`<div class="stat" style="border-color:${SC[s]}" onclick="S.af='${s}';go('appts')"><div class="sm b" style="color:${SC[s]}">${s}</div><div class="n">${cnt(s)}</div></div>`).join('')}</div>
+<div class="sec">Next Appointment</div>${apptCard(0)}<button class="btn" style="margin-top:4px" onclick="S.af='All';go('appts')">View All Appointments</button></div>${nav('telehealth')}`;
+function apptCard(i){const a=APPTS[i];return `<div class="card row" style="cursor:pointer" onclick="S.appt=${i};go('appt')">${av(a[0],'',i+2)}<div style="flex:1"><b class="sm">${a[0]}</b><div class="mu">${a[1]} · ${a[5]} Consultation</div><div class="xs mu row" style="gap:4px;margin-top:3px">${I.cal} ${a[2]} · ${a[3]}</div></div><span class="tag st-${a[4]}">${a[4]}</span></div>`}
+R.appts=()=>{const f=S.af||'All';return `${tb('Appointments')}<div class="scroll"><div class="hs" style="margin-bottom:6px">${['All','Upcoming','Completed','Missed','Cancelled'].map(x=>`<span class="pill ${x===f?'on':''}" onclick="S.af='${x}';render('appts')">${x}</span>`).join('')}</div>${APPTS.map((a,i)=>f==='All'||a[4]===f?apptCard(i):'').join('')||'<div class="mu" style="text-align:center;padding:40px">No appointments</div>'}</div>${nav('telehealth')}`};
+R.doctors=()=>{const L=S.spec==='m'?MDOCS:DOCS;return `${tb(S.spec==='m'?'Mental Health':'Primary Care')}<div class="scroll"><div class="srch" style="margin-bottom:12px"><input class="in" placeholder="Search doctor, speciality, hospital">${I.search}</div>${L.map((d,i)=>`<div class="card"><div class="doc">${av(d[0],'lg',i+2)}<div style="flex:1"><b>${d[0]}</b><div class="mu">${d[1]}</div><div class="xs mu">${d[2]}</div><div class="xs" style="margin-top:3px"><span class="star">★</span> ${d[3]} · ${d[5]} yrs exp · <b style="color:var(--m)">${d[4]} copay</b></div></div></div><button class="btn sm" style="width:100%;margin-top:12px" onclick="S.doc=${i};go('book')">${I.video} Book Video Consultation</button></div>`).join('')}</div>${nav('telehealth')}`};
+const SLOTS={Morning:['8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM'],Afternoon:['12:00 PM','12:30 PM','1:30 PM','2:00 PM','3:00 PM','3:30 PM'],Evening:['5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM'],Night:['8:00 PM','8:30 PM','9:00 PM','9:30 PM']};
+const DAYS=[...Array(14)].map((_,i)=>{const d=new Date(2026,9,29+i);return [d.toLocaleDateString('en-US',{weekday:'short'}),d.getDate(),d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})]});
+R.book=()=>{const d=(S.spec==='m'?MDOCS:DOCS)[S.doc||0];return `${tb('TeleHealth',{logo:1})}<div class="scroll"><div class="card" style="text-align:center">${av(d[0],'xl',(S.doc||0)+2).replace('class="av xl"','class="av xl" style="margin:0 auto 10px;background:linear-gradient(135deg,'+AVC[((S.doc||0)+2)%8]+')"')}<div class="h3">${d[0]}</div><div class="mu">${d[1]}</div><div class="row" style="justify-content:center;gap:16px;margin-top:10px;font-size:13px"><span><span class="star">★</span> ${d[3]}</span><span>${d[5]} yrs</span><b style="color:var(--m)">${d[4]} copay</b><span>45 min</span></div></div>
+<div class="sec">Select Date <span class="mu">Oct – Nov 2026</span></div><div class="days">${DAYS.map((x,i)=>`<div class="day ${i===S.day?'on':''}" onclick="S.day=${i};render('book')">${x[0]}<b>${x[1]}</b></div>`).join('')}</div>
+<div class="sec">Available Time</div><div class="seg">${Object.keys(SLOTS).map(k=>`<button class="${k===S.slotT?'on':''}" onclick="S.slotT='${k}';render('book')">${k}</button>`).join('')}</div><div class="slots">${SLOTS[S.slotT].map((t,i)=>`<button class="slot ${t===S.slot?'on':''} ${(i+S.day)%5===3?'x':''}" onclick="S.slot='${t}';render('book')">${t}</button>`).join('')}</div>
+<div class="card" style="margin-top:16px;background:var(--ml);box-shadow:none"><b class="sm" style="color:var(--m)">Appointment Time : ${DAYS[S.day][2]} (${S.slot})</b></div>
+${sel('Appointment For',['Self – Jonathan Davis','Sarah Davis (Spouse)','Emma Davis (Child)'],'')}${sel('Insurance',['Blue Cross Blue Shield of IL – XGH 884210337','Self-pay'],'')}<label class="f">Reason for Visit</label><textarea class="in" placeholder="Describe your symptoms">Follow-up on blood pressure readings and medication timing.</textarea>
+<label class="f">Translator Needed?</label><div class="radio"><label><input type="radio" name="tr"> Yes</label><label><input type="radio" name="tr" checked> No</label></div>
+<label class="f">Prescription / Documents</label><div class="upl" onclick="this.innerHTML='✅ <b>bp_log_oct.pdf</b><div class=mu>Uploaded</div>'">${I.up}<div class="b sm">Upload Here</div><div class="mu">You can upload a image or Capture image of the RX</div></div>
+<div style="height:18px"></div><button class="btn" onclick="confirmBook()">Confirm</button></div>${nav('telehealth')}`};
+function confirmBook(){const d=(S.spec==='m'?MDOCS:DOCS)[S.doc||0];APPTS.unshift([d[0],S.spec==='m'?'Mental Health':'Primary Care',DAYS[S.day][2],S.slot,'Upcoming','Video']);S.appt=0;toast('Appointment booked ✓');go('appt',true)}
+R.appt=()=>{const a=APPTS[S.appt||0];const up=a[4]==='Upcoming';return `${tb('TeleHealth',{logo:1})}<div class="scroll"><div class="card" style="text-align:center;padding:22px">${av(a[0],'xl',(S.appt||0)+2).replace('class="av xl"','class="av xl" style="margin:0 auto 10px;background:linear-gradient(135deg,'+AVC[((S.appt||0)+2)%8]+')"')}<div class="h3">${a[0]}</div><div class="mu">${a[2]}, ${a[3]}</div><div class="mu">${a[5]} Consultation · ${a[1]}</div><span class="tag st-${a[4]}" style="margin-top:10px">${a[4]}</span>
+${up?`<div class="row" style="margin-top:18px"><button class="btn sm" style="flex:1;height:42px" onclick="toast('Connecting video call…')">${I.video} Video Call</button><button class="btn sm" style="flex:1;height:42px" onclick="toast('Connecting audio call…')">${I.phone} Audio Call</button></div>`:''}</div>
+<div class="card"><div class="kv"><span class="mu">Appointment For</span><b>Self – Jonathan Davis</b></div><div class="kv"><span class="mu">Insurance</span><b>BCBS of IL</b></div><div class="kv"><span class="mu">Copay</span><b>$15.00</b></div><div class="kv"><span class="mu">Translator</span><b>No</b></div><div class="kv"><span class="mu">Reason</span><b style="text-align:right;max-width:60%">BP follow-up</b></div></div>
+${up?`<div class="sec">Other Actions</div><button class="btn ol" onclick="APPTS[S.appt][4]='Cancelled';render('appt');toast('Appointment cancelled')">Cancel Appointment</button><div style="height:10px"></div><button class="btn" onclick="S.doc=0;S.spec=APPTS[S.appt][1]==='Mental Health'?'m':'p';go('book')">Reschedule Appointment</button>`:a[4]==='Completed'?`<button class="btn" onclick="S.step=7;go('wallet')">View Visit Notes</button>`:`<button class="btn" onclick="S.spec='p';go('doctors')">Book Again</button>`}</div>${nav('telehealth')}`};
+/* ---------- router ---------- */
+function centerStep(){const s=$('#stp'),a=s&&s.querySelector('.st.on');if(a)s.scrollLeft=a.offsetLeft-s.clientWidth/2+a.offsetWidth/2}
+let cur=null;const NOHIST=['splash','welcome'];
+function render(id){const el=$('#s-'+id);if(!el)return;const sc=el.querySelector('.scroll');const y=sc?sc.scrollTop:0;el.innerHTML=R[id]();if(id===cur){const n=el.querySelector('.scroll');if(n&&id!=='wallet')n.scrollTop=y}if(id==='wallet')centerStep();if(id==='chat'){const m=$('#msgs');m.scrollTop=m.scrollHeight}}
+function go(id,replace){if(!R[id])id='home';if(cur&&cur!==id&&!replace&&!NOHIST.includes(cur))S.stack.push(cur);closeSheet();render(id);$$('.screen').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));cur=id;if(id==='wallet')centerStep();if(id==='chat'){const m=$('#msgs');m.scrollTop=m.scrollHeight}if(location.hash!=='#'+id)history.replaceState(null,'','#'+id)}
+function back(){const p=S.stack.pop();if(p){const c=cur;cur=null;go(p,true)}else go('home',true)}
+document.addEventListener('DOMContentLoaded',()=>{const ph=$('#phone');Object.keys(R).forEach(k=>{const s=document.createElement('section');s.className='screen';s.id='s-'+k;ph.appendChild(s)});$('#s-welcome').onclick=()=>go('login');let h=location.hash.slice(1);const wm=h.match(/^wallet-(\d+)$/);if(wm){S.step=Math.min(12,Math.max(0,wm[1]-1));h='wallet'}if(h&&R[h]&&!NOHIST.includes(h)){go(h)}else{go('splash');setTimeout(()=>{go('welcome');setTimeout(()=>{if(cur==='welcome')go('login')},2600)},2400)}});
+</script></body></html>
