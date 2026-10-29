@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>myHub4Health - Role-Based Prototype</title>
+<style>
+  :root {
+    --primary: #B01030;
+    --teal: #1e5a5a;
+    --bg: #f5f5f7;
+    --card: #fff;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f0f0f0;
+    min-height: 100vh;
+    color: var(--text);
+  }
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (min-width: 768px) {
+    body { background: #e8e8e8; padding: 20px; }
+    .app {
+      max-width: 900px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+      min-height: calc(100vh - 40px);
+      overflow: hidden;
+    }
+  }
+  .status {
+    height: 44px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+  }
+  .screen {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg);
+    padding-bottom: 20px;
+  }
+  .screen.active { display: block; }
+  .nav {
+    height: 68px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+  }
+  .nav-item {
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    cursor: pointer;
+    padding: 6px;
+    min-width: 60px;
+  }
+  .nav-item.active { color: var(--primary); }
+  .nav-item:focus { outline: 2px solid var(--primary); }
+  .btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    width: 100%;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  .btn.teal { background: var(--teal); }
+  .btn.outline { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
+  .btn:focus { outline: 2px solid #000; }
+  .input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px;
+    margin: 10px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .header {
+    padding: 14px 16px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+  }
+  .tab {
+    white-space: nowrap;
+    color: #999;
+    font-weight: 600;
+    cursor: pointer;
+    padding-bottom: 6px;
+  }
+  .tab.active { color: #000; border-bottom: 2px solid #000; }
+  .role-badge {
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .metric { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .share-btn {
+    background: #eee;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  @media (min-width: 768px) {
+    .card { margin: 12px 24px; }
+    .header { padding: 16px 24px; }
+    .tabs { padding: 12px 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="status"><span>9:41</span><span>myHub4Health</span></div>
+
+  <!-- ROLE SELECT / LOGIN -->
+  <div class="screen active" id="login">
+    <div style="position:relative; height:280px; background:url('assets/splash.png') center/cover no-repeat; display:flex; align-items:flex-end; justify-content:center; padding-bottom:20px;">
+      <div style="background:rgba(176,16,48,0.85); color:white; padding:16px 24px; border-radius:12px; text-align:center; width:90%;">
+        <div style="font-size:26px; font-weight:800;">myHub4Health</div>
+        <div style="font-size:13px; opacity:0.9;">My Health My Way</div>
+      </div>
+    </div>
+    <div style="padding:24px 20px;">
+      <h3 style="margin-bottom:8px; text-align:center;">Welcome</h3>
+      <p style="text-align:center; color:#666; font-size:14px; margin-bottom:20px;">Your personal health wallet, community, and education platform</p>
+      <h4 style="margin-bottom:12px;">Select Your Role</h4>
+      <button class="btn" onclick="setRole('primary')">Primary User</button>
+      <button class="btn outline" onclick="setRole('caregiver')">Caregiver</button>
+      <button class="btn outline" onclick="setRole('family')">Family Member</button>
+      <button class="btn outline" onclick="setRole('physician')">Health Plan Physician</button>
+      <button class="btn outline" onclick="setRole('insurance')">Health Insurance User</button>
+      <div style="margin-top:24px; font-size:12px; color:#888; text-align:center;">Secure · Private · Accessible on all devices</div>
+    </div>
+  </div>
+
+  <!-- HOME / DASHBOARD -->
+  <div class="screen" id="home">
+    <div class="header">
+      <div style="width:36px;height:36px;border-radius:50%;background:#ddd;"></div>
+      <div>
+        <div style="font-weight:700;">Hello, <span id="userName">User</span></div>
+        <div class="role-badge" id="roleLabel">Primary</div>
+      </div>
+    </div>
+    <div class="card">
+      <strong>Daily Goals</strong>
+      <div class="metric">Steps: 4,500 · Calories: 900 · Heart: 72 bpm</div>
+      <button class="btn teal" style="margin-top:8px;" onclick="go('tracker')">View Tracker</button>
+    </div>
+    <div class="card">
+      <strong>Reminders</strong>
+      <div>Please take Medication</div>
+      <div>How are you feeling today?</div>
+    </div>
+    <div class="card">
+      <strong>Quick Actions</strong>
+      <button class="btn" onclick="go('phr')">Open PHR</button>
+      <button class="btn outline" onclick="go('community')">Community</button>
+      <button class="btn outline" onclick="go('education')">Education (AI)</button>
+      <button class="btn outline" onclick="go('telehealth')">TeleHealth</button>
+    </div>
+  </div>
+
+  <!-- DETAILED PHR -->
+  <div class="screen" id="phr">
+    <div class="header">
+      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
+      <h2>Personal Health Record</h2>
+      <span class="role-badge" id="phrRole"></span>
+    </div>
+    <div class="tabs" id="phrTabs">
+      <div class="tab active" onclick="showPhrTab('demo')">Demographics</div>
+      <div class="tab" onclick="showPhrTab('emergency')">Emergency</div>
+      <div class="tab" onclick="showPhrTab('insurance')">Insurance</div>
+      <div class="tab" onclick="showPhrTab('meds')">Medications</div>
+      <div class="tab" onclick="showPhrTab('allergies')">Allergies</div>
+      <div class="tab" onclick="showPhrTab('surgeries')">Surgeries</div>
+      <div class="tab" onclick="showPhrTab('notes')">Doctor Notes</div>
+    </div>
+    <div id="phrContent" style="padding:12px;"></div>
+    <div style="padding:12px;">
+      <button class="btn" onclick="savePhr()">Save PHR</button>
+      <button class="btn outline" onclick="shareItem('PHR')">Share PHR</button>
+    </div>
+  </div>
+
+  <!-- COMMUNITY / CHAT -->
+  <div class="screen" id="community">
+    <div class="header">
+      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
+      <h2>myHealth Community</h2>
+    </div>
+    <div class="card">
+      <strong>Stories</strong>
+      <div style="margin-top:8px; font-size:14px;">Share your journey or read others in similar situations.</div>
+      <button class="btn" onclick="addStory()">Share Story</button>
+    </div>
+    <div class="card">
+      <strong>Chat Rooms</strong>
+      <div id="chatStatus" style="font-size:13px; margin:6px 0; color:#B01030;"></div>
+      <div id="chatRooms"></div>
+      <input class="input" id="chatMsg" placeholder="Type a message...">
+      <button class="btn" onclick="sendChat()">Send</button>
+    </div>
+    <div class="card">
+      <strong>Relevant Articles</strong>
+      <div id="communityArticles"></div>
+    </div>
+  </div>
+
+  <!-- EDUCATION (AI CURATED) -->
+  <div class="screen" id="education">
+    <div class="header">
+      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
+      <h2>myHealth University</h2>
+    </div>
+    <div class="card">
+      <label>Your Diagnosis / Condition</label>
+      <input class="input" id="diagnosis" placeholder="e.g. Type 2 Diabetes, Hypertension, Cancer..." onchange="curateContent()">
+      <button class="btn" onclick="curateContent()">Curate with AI</button>
+    </div>
+    <div id="eduContent"></div>
+  </div>
+
+  <!-- TELEHEALTH -->
+  <div class="screen" id="telehealth">
+    <div class="header">
+      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
+      <h2>TeleHealth</h2>
+    </div>
+    <div class="card">
+      <input class="input" placeholder="Search Specialty / Physician">
+      <button class="btn" onclick="bookAppt()">Book Appointment</button>
+    </div>
+    <div class="card">
+      <label><input type="checkbox" id="needTranslator"> Need Translator?</label>
+      <div id="apptStatus"></div>
+    </div>
+  </div>
+
+  <!-- METRICS / ADMIN BACKEND VIEW -->
+  <div class="screen" id="metrics">
+    <div class="header">
+      <span onclick="go('home')" style="cursor:pointer;" role="button" tabindex="0">←</span>
+      <h2>Metrics Dashboard</h2>
+    </div>
+    <div class="card" id="metricsContent">
+      Loading metrics...
+    </div>
+    <button class="btn" onclick="refreshMetrics()">Refresh</button>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="nav">
+    <div class="nav-item active" onclick="go('home')" tabindex="0" role="button">Home</div>
+    <div class="nav-item" onclick="go('phr')" tabindex="0" role="button">PHR</div>
+    <div class="nav-item" onclick="go('community')" tabindex="0" role="button">Community</div>
+    <div class="nav-item" onclick="go('education')" tabindex="0" role="button">Learn</div>
+    <div class="nav-item" onclick="go('metrics')" tabindex="0" role="button">Metrics</div>
+  </div>
+</div>
+
+<script>
+let currentRole = 'primary';
+let phrData = JSON.parse(localStorage.getItem('phrData') || '{}');
+let metrics = JSON.parse(localStorage.getItem('metrics') || '{"logins":0,"phrSaves":0,"shares":0,"chats":0,"eduViews":0,"appointments":0,"warnings":0}');
+
+function setRole(role) {
+  currentRole = role;
+  document.getElementById('roleLabel').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+  document.getElementById('phrRole').textContent = role;
+  document.getElementById('userName').textContent = role === 'physician' ? 'Dr. Smith' : 'Ryan';
+  metrics.logins++;
+  saveMetrics();
+  go('home');
+  track('login', role);
+}
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  if (id === 'phr') renderPhr();
+  if (id === 'community') renderCommunity();
+  if (id === 'education') curateContent();
+  if (id === 'metrics') refreshMetrics();
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+}
+
+function showPhrTab(tab) {
+  document.querySelectorAll('#phrTabs .tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderPhrSection(tab);
+}
+
+function renderPhr() {
+  renderPhrSection('demo');
+}
+
+function renderPhrSection(tab) {
+  const content = document.getElementById('phrContent');
+  const d = phrData;
+  let html = '';
+  if (tab === 'demo') {
+    html = `
+      <label>Full Name</label><input class="input" id="name" value="${d.name||''}">
+      <label>Address</label><input class="input" id="address" value="${d.address||''}">
+      <label>City</label><input class="input" id="city" value="${d.city||''}">
+      <label>State</label><input class="input" id="state" value="${d.state||''}">
+      <label>Zip</label><input class="input" id="zip" value="${d.zip||''}">
+      <label>SSN</label><input class="input" id="ssn" value="${d.ssn||''}">
+      <label>Race</label><input class="input" id="race" value="${d.race||''}">
+      <label>Ethnicity</label><input class="input" id="ethnicity" value="${d.ethnicity||''}">
+      <label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select>
+      <label>Diagnosis (for AI curation)</label><input class="input" id="diag" value="${d.diagnosis||''}" placeholder="Used to curate education content">
+    `;
+  } else if (tab === 'emergency') {
+    html = `
+      <label>Police</label><input class="input" id="police" value="${d.police||''}">
+      <label>Fire</label><input class="input" id="fire" value="${d.fire||''}">
+      <label>Ambulance</label><input class="input" id="ambulance" value="${d.ambulance||''}">
+      <label>Primary Care Name</label><input class="input" id="pcpName" value="${d.pcpName||''}">
+      <label>PCP Phone</label><input class="input" id="pcpPhone" value="${d.pcpPhone||''}">
+    `;
+  } else if (tab === 'insurance') {
+    html = `
+      <label>Insurance Company</label><input class="input" id="insCo" value="${d.insCo||''}">
+      <label>Group Number</label><input class="input" id="group" value="${d.group||''}">
+      <label>Customer Service #</label><input class="input" id="cs" value="${d.cs||''}">
+      <label>Member ID</label><input class="input" id="memberId" value="${d.memberId||''}">
+      <div style="margin-top:12px;">
+        <button class="btn outline" onclick="document.getElementById('insFront').click()">📷 Take Photo of Card Front</button>
+        <input type="file" id="insFront" accept="image/*" capture="environment" style="display:none" onchange="processInsurancePhoto(this, 'front')">
+        <button class="btn outline" style="margin-top:8px;" onclick="document.getElementById('insBack').click()">📷 Take Photo of Card Back</button>
+        <input type="file" id="insBack" accept="image/*" capture="environment" style="display:none" onchange="processInsurancePhoto(this, 'back')">
+      </div>
+      <div id="insPhotoStatus" style="margin-top:8px; font-size:13px; color:#666;"></div>
+    `;
+  } else if (tab === 'meds') {
+    html = `
+      <div style="margin-bottom:12px;">
+        <label>Search by drug name</label>
+        <input class="input" id="medSearch" placeholder="e.g. Lisinopril, Metformin, Atorvastatin" onkeyup="if(event.key==='Enter') searchMed()">
+        <button class="btn" onclick="searchMed()">Search NIH</button>
+        <button class="btn outline" onclick="document.getElementById('pillPhoto').click()">📷 Open Camera & Take Pill Bottle Photo</button>
+        <input type="file" id="pillPhoto" accept="image/*" capture="environment" style="display:none" onchange="processPillPhoto(this)">
+      </div>
+      <div id="medResults"></div>
+      <h4 style="margin:16px 0 8px;">My Medications</h4>
+      <div id="medList">${(d.medications||[]).map(m=>`
+        <div class="card" style="display:flex; gap:12px; align-items:center;">
+          <img src="${m.image||'https://via.placeholder.com/80?text=Pill'}" style="width:70px;height:70px;object-fit:contain;border-radius:8px;background:#f9f9f9;" alt="Pill">
+          <div style="flex:1;">
+            <strong>${m.name}</strong><br>
+            <small>${m.strength||''} · ${m.form||''}</small><br>
+            <small style="color:#666;">${m.imprint||''}</small>
+          </div>
+          <button class="share-btn" onclick="removeMed('${m.name}')">✕</button>
+        </div>
+      `).join('')||'<div class="card">No medications added yet</div>'}</div>
+    `;
+  } else if (tab === 'allergies') {
+    html = `<div id="allergyList">${(d.allergies||[]).map(a=>`<div class="card">${a}</div>`).join('')||'None'}</div>
+            <input class="input" id="newAllergy" placeholder="Add allergy">
+            <button class="btn" onclick="addAllergy()">Add</button>`;
+  } else if (tab === 'surgeries') {
+    html = `<div id="surgeryList">${(d.surgeries||[]).map(s=>`<div class="card">${s}</div>`).join('')||'None'}</div>
+            <input class="input" id="newSurgery" placeholder="Add surgery">
+            <button class="btn" onclick="addSurgery()">Add</button>`;
+  } else if (tab === 'notes') {
+    html = `<textarea id="notes" rows="6" placeholder="Doctor notes...">${d.notes||''}</textarea>`;
+  }
+  content.innerHTML = html;
+}
+
+function savePhr() {
+  const fields = ['name','address','city','state','zip','ssn','race','ethnicity','diag','police','fire','ambulance','pcpName','pcpPhone','insCo','group','cs','memberId','notes'];
+  fields.forEach(f => {
+    const el = document.getElementById(f);
+    if (el) phrData[f] = el.value;
+  });
+  phrData.diagnosis = document.getElementById('diag')?.value || phrData.diagnosis;
+  localStorage.setItem('phrData', JSON.stringify(phrData));
+  metrics.phrSaves++;
+  saveMetrics();
+  alert('PHR saved. Diagnosis will be used for AI curation.');
+  track('phr_save', currentRole);
+}
+
+function addAllergy() {
+  const v = document.getElementById('newAllergy').value;
+  if (!v) return;
+  phrData.allergies = phrData.allergies || [];
+  phrData.allergies.push(v);
+  localStorage.setItem('phrData', JSON.stringify(phrData));
+  renderPhrSection('allergies');
+}
+
+function addSurgery() {
+  const v = document.getElementById('newSurgery').value;
+  if (!v) return;
+  phrData.surgeries = phrData.surgeries || [];
+  phrData.surgeries.push(v);
+  localStorage.setItem('phrData', JSON.stringify(phrData));
+  renderPhrSection('surgeries');
+}
+
+// NIH-style sample drug database (pill images are representative; real app would call RxImage / DailyMed APIs)
+const nihDrugs = {
+  "lisinopril": { name: "Lisinopril", strength: "10 mg", form: "Tablet", imprint: "L 10", image: "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=200&h=200&fit=crop" },
+  "metformin": { name: "Metformin", strength: "500 mg", form: "Tablet", imprint: "500", image: "https://images.unsplash.com/photo-1550572017-edd951b55104?w=200&h=200&fit=crop" },
+  "atorvastatin": { name: "Atorvastatin", strength: "20 mg", form: "Tablet", imprint: "ATV 20", image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop" },
+  "amlodipine": { name: "Amlodipine", strength: "5 mg", form: "Tablet", imprint: "A 5", image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop" },
+  "omeprazole": { name: "Omeprazole", strength: "20 mg", form: "Capsule", imprint: "OME 20", image: "https://images.unsplash.com/photo-1550572017-edd951b55104?w=200&h=200&fit=crop" },
+  "levothyroxine": { name: "Levothyroxine", strength: "50 mcg", form: "Tablet", imprint: "L 50", image: "https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=200&h=200&fit=crop" },
+  "sertraline": { name: "Sertraline", strength: "50 mg", form: "Tablet", imprint: "S 50", image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop" },
+  "gabapentin": { name: "Gabapentin", strength: "300 mg", form: "Capsule", imprint: "G 300", image: "https://images.unsplash.com/photo-1550572017-edd951b55104?w=200&h=200&fit=crop" }
+};
+
+function searchMed() {
+  const q = (document.getElementById('medSearch').value || '').toLowerCase().trim();
+  const results = document.getElementById('medResults');
+  if (!q) { results.innerHTML = ''; return; }
+  const matches = Object.keys(nihDrugs).filter(k => k.includes(q) || nihDrugs[k].name.toLowerCase().includes(q));
+  if (matches.length === 0) {
+    results.innerHTML = `<div class="card">No match in NIH sample data. Try Lisinopril, Metformin, Atorvastatin, etc.</div>`;
+    return;
+  }
+  results.innerHTML = matches.map(k => {
+    const d = nihDrugs[k];
+    return `<div class="card" style="display:flex; gap:12px; align-items:center; cursor:pointer;" onclick="addMed('${k}')">
+      <img src="${d.image}" style="width:60px;height:60px;object-fit:contain;border-radius:8px;background:#f9f9f9;" alt="Pill">
+      <div>
+        <strong>${d.name}</strong><br>
+        <small>${d.strength} · ${d.form}</small><br>
+        <small style="color:#666;">Imprint: ${d.imprint}</small>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addMed(key) {
+  const d = nihDrugs[key];
+  if (!d) return;
+  phrData.medications = phrData.medications || [];
+  if (!phrData.medications.find(m => m.name === d.name)) {
+    phrData.medications.push({ ...d });
+    localStorage.setItem('phrData', JSON.stringify(phrData));
+  }
+  document.getElementById('medSearch').value = '';
+  document.getElementById('medResults').innerHTML = '';
+  renderPhrSection('meds');
+  track('med_added', d.name);
+}
+
+function processPillPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  // Simulated OCR + NIH lookup (in production: send image to backend → OCR → RxNorm/RxImage API)
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // Simulate detecting a common drug from the bottle photo
+    const simulated = Object.keys(nihDrugs)[Math.floor(Math.random() * Object.keys(nihDrugs).length)];
+    const d = nihDrugs[simulated];
+    const results = document.getElementById('medResults');
+    results.innerHTML = `
+      <div class="card">
+        <div style="font-size:13px; color:#666; margin-bottom:8px;">Camera photo analyzed (simulated OCR)</div>
+        <div style="display:flex; gap:12px; align-items:center; cursor:pointer;" onclick="addMed('${simulated}')">
+          <img src="${e.target.result}" style="width:70px;height:70px;object-fit:cover;border-radius:8px;" alt="Your photo">
+          <div>
+            <strong>Detected: ${d.name}</strong><br>
+            <small>${d.strength} · ${d.form}</small><br>
+            <small>Tap to add (NIH data)</small>
+          </div>
+        </div>
+      </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function processInsurancePhoto(input, side) {
+  if (!input.files || !input.files[0]) return;
+  const status = document.getElementById('insPhotoStatus');
+  status.innerHTML = `Processing ${side} of insurance card...`;
+  // Simulated Textract / OCR (in production: send to Amazon Textract or similar)
+  setTimeout(() => {
+    if (side === 'front') {
+      document.getElementById('insCo').value = 'Blue Cross Blue Shield';
+      document.getElementById('memberId').value = 'XYZ123456789';
+      document.getElementById('group').value = 'GRP-98765';
+      phrData.insCo = 'Blue Cross Blue Shield';
+      phrData.memberId = 'XYZ123456789';
+      phrData.group = 'GRP-98765';
+    } else {
+      document.getElementById('cs').value = '1-800-555-0199';
+      phrData.cs = '1-800-555-0199';
+    }
+    localStorage.setItem('phrData', JSON.stringify(phrData));
+    status.innerHTML = `<span style="color:green;">✓ ${side === 'front' ? 'Front' : 'Back'} processed — fields auto-populated</span>`;
+    track('insurance_photo', side);
+  }, 800);
+}
+
+function removeMed(name) {
+  phrData.medications = (phrData.medications || []).filter(m => m.name !== name);
+  localStorage.setItem('phrData', JSON.stringify(phrData));
+  renderPhrSection('meds');
+}
+
+function renderCommunity() {
+  const status = document.getElementById('chatStatus');
+  if (chatBanned) {
+    status.innerHTML = '⚠️ Community posting is paused — account under review. PHR and Education remain available.';
+  } else {
+    status.innerHTML = '';
+  }
+  document.getElementById('chatRooms').innerHTML = `
+    <div class="card" style="margin:6px 0;">Diabetes Support • 12 online</div>
+    <div class="card" style="margin:6px 0;">Cancer Caregivers • 8 online</div>
+    <div class="card" style="margin:6px 0;">General Wellness • 24 online</div>
+  `;
+  document.getElementById('communityArticles').innerHTML = `
+    <div>Shared story: Living with hypertension</div>
+    <div>Article: Managing stress with similar conditions</div>
+  `;
+}
+
+let chatBanned = false;
+let chatWarnings = 0;
+
+const bannedWords = [
+  'fuck','shit','asshole','bitch','damn','cunt','dick','pussy','bastard','slut','whore',
+  'kill','murder','threat','threaten','bomb','shoot','attack','hate','die','suicide',
+  'stupid','idiot','moron','retard' // expand as needed; in production use a proper moderation API
+];
+
+function containsBannedLanguage(text) {
+  const lower = text.toLowerCase();
+  return bannedWords.some(word => lower.includes(word));
+}
+
+function sendChat() {
+  if (chatBanned) {
+    alert('Your account is under review. You can still use PHR and Education, but posting in Community is paused until review is complete.');
+    return;
+  }
+  const msg = document.getElementById('chatMsg').value.trim();
+  if (!msg) return;
+
+  if (containsBannedLanguage(msg)) {
+    chatWarnings++;
+    chatBanned = true;
+    metrics.warnings = (metrics.warnings || 0) + 1;
+    saveMetrics();
+    document.getElementById('chatMsg').value = '';
+    alert('Warning: Your message contained vulgar or threatening language. Your account will need to be reviewed before you can post in the Community again. You still have full access to PHR and Education.');
+    track('chat_moderation_warning', msg);
+    return;
+  }
+
+  metrics.chats++;
+  saveMetrics();
+  alert('Message sent (simulated). In real app this would post to community.');
+  document.getElementById('chatMsg').value = '';
+  track('chat', currentRole);
+}
+
+function addStory() {
+  alert('Story shared with community (simulated).');
+  track('story', currentRole);
+}
+
+function curateContent() {
+  const diag = document.getElementById('diagnosis')?.value || phrData.diagnosis || 'general health';
+  const content = document.getElementById('eduContent');
+  content.innerHTML = `
+    <div class="card">
+      <strong>AI-Curated for: ${diag}</strong>
+      <div class="metric">Based on your diagnosis</div>
+      <div style="margin-top:10px;">
+        <div class="card">Article: Latest research on ${diag}</div>
+        <div class="card">Live Forum: Weekly support group for ${diag}</div>
+        <div class="card">Video: Managing daily life with ${diag}</div>
+        <button class="share-btn" onclick="shareItem('Education content for ${diag}')">Share</button>
+      </div>
+    </div>
+  `;
+  metrics.eduViews++;
+  saveMetrics();
+  track('edu_view', diag);
+}
+
+function bookAppt() {
+  const translator = document.getElementById('needTranslator').checked;
+  document.getElementById('apptStatus').innerHTML = `
+    <div style="margin-top:10px; color:green;">Appointment booked${translator ? ' with translator' : ''}.</div>
+  `;
+  metrics.appointments++;
+  saveMetrics();
+  track('appointment', currentRole);
+}
+
+function shareItem(what) {
+  metrics.shares++;
+  saveMetrics();
+  alert(`Shared "${what}" off-platform (simulated link generated).`);
+  track('share', what);
+}
+
+function refreshMetrics() {
+  document.getElementById('metricsContent').innerHTML = `
+    <div><strong>Logins:</strong> ${metrics.logins}</div>
+    <div><strong>PHR Saves:</strong> ${metrics.phrSaves}</div>
+    <div><strong>Shares:</strong> ${metrics.shares}</div>
+    <div><strong>Chat Messages:</strong> ${metrics.chats}</div>
+    <div><strong>Moderation Warnings:</strong> ${metrics.warnings || 0}</div>
+    <div><strong>Education Views:</strong> ${metrics.eduViews}</div>
+    <div><strong>Appointments:</strong> ${metrics.appointments}</div>
+    <div class="metric" style="margin-top:12px;">All metrics stored locally. In production this would feed a backend analytics dashboard.</div>
+  `;
+}
+
+function saveMetrics() {
+  localStorage.setItem('metrics', JSON.stringify(metrics));
+}
+
+function track(event, detail) {
+  console.log(`[METRIC] ${event} | role: ${currentRole} | detail: ${detail}`);
+}
+
+refreshMetrics();
+</script>
+</body>
+</html>
